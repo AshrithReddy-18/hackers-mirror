@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Install — The Hacker's Mirror</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050a0f; --surface:#0d1821; --border:#1e3048;
+  --accent:#00ff88; --text:#e2eaf4; --muted:#5a7a99;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; padding:32px 20px 60px; max-width:600px; margin:0 auto; }
+h1 { font-size:28px; font-weight:800; margin-bottom:6px; }
+.sub { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); margin-bottom:40px; }
+.platform { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.platform-title { font-size:18px; font-weight:800; margin-bottom:4px; display:flex; align-items:center; gap:10px; }
+.platform-sub { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); margin-bottom:20px; }
+.step { display:flex; gap:14px; margin-bottom:16px; align-items:flex-start; }
+.step-num { width:28px; height:28px; border-radius:50%; background:var(--accent); color:#000; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.step-text { font-size:14px; line-height:1.6; }
+.step-text strong { color:var(--accent); }
+.note { background:rgba(0,255,136,0.06); border:1px solid rgba(0,255,136,0.2); border-radius:8px; padding:12px 16px; font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); line-height:1.6; margin-top:20px; }
+a { color:var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>How to Install</h1>
+<p class="sub">The Hacker's Mirror · PWA Installation Guide</p>
+
+<!-- ANDROID -->
+<div class="platform">
+  <div class="platform-title">🤖 Android (Chrome)</div>
+  <div class="platform-sub">Recommended browser: Chrome or Edge</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text">Open the app URL in <strong>Chrome</strong> on your Android phone</div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text">A banner will appear at the bottom saying <strong>"Install The Hacker's Mirror"</strong> — tap <strong>Install</strong></div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text">If the banner doesn't appear: tap the <strong>⋮ menu</strong> (top right) → tap <strong>"Add to Home screen"</strong></div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-text">The app icon appears on your home screen. Opens fullscreen, works offline ✓</div>
+  </div>
+
+  <div class="note">✔ Works on Android 8+ with Chrome 73+. Also works on Samsung Internet and Edge.</div>
+</div>
+
+<!-- iOS -->
+<div class="platform">
+  <div class="platform-title">🍎 iPhone / iPad (Safari)</div>
+  <div class="platform-sub">Must use Safari — Chrome on iOS cannot install PWAs</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text">Open the app URL in <strong>Safari</strong> (not Chrome) on your iPhone</div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text">Tap the <strong>Share button</strong> at the bottom of the screen (the box with an arrow pointing up ↑)</div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text">Scroll down in the share sheet and tap <strong>"Add to Home Screen"</strong></div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-text">Tap <strong>Add</strong> in the top right. The icon will appear on your home screen.</div>
+  </div>
+
+  <div class="note">✔ Works on iOS 16.4+. On older iOS the app still works, but offline support is limited.</div>
+</div>
+
+<!-- Desktop -->
+<div class="platform">
+  <div class="platform-title">💻 Desktop (Chrome / Edge)</div>
+  <div class="platform-sub">Optional — the app is designed for mobile but works on desktop too</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text">Open the URL in <strong>Chrome or Edge</strong></div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text">Look for the <strong>install icon ⊕</strong> in the address bar (right side)</div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text">Click it → click <strong>Install</strong>. Opens as a standalone window.</div>
+  </div>
+</div>
+
+<!-- Hosting note -->
+<div class="platform">
+  <div class="platform-title">🌐 Hosting (for sharing with others)</div>
+  <div class="platform-sub">To share with others, you need to host these files online</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text"><strong>Netlify Drop</strong> (easiest): go to <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a> and drag the entire folder — you'll get a live URL in 30 seconds. Free.</div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text"><strong>GitHub Pages</strong>: push the folder to a GitHub repo, enable Pages in settings. Free, custom domain supported.</div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text"><strong>Vercel</strong>: drag and drop or connect a GitHub repo at <a href="https://vercel.com" target="_blank">vercel.com</a>. Free tier is generous.</div>
+  </div>
+
+  <div class="note">⚠ PWA features (offline, install prompt) only work when served over HTTPS. All three options above provide HTTPS automatically.</div>
+</div>
+
+</body>
+</html>

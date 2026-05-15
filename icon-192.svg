@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#050a0f"/>
+  <!-- grid lines -->
+  <line x1="0" y1="48" x2="192" y2="48" stroke="#00ff88" stroke-width="0.5" opacity="0.15"/>
+  <line x1="0" y1="96" x2="192" y2="96" stroke="#00ff88" stroke-width="0.5" opacity="0.15"/>
+  <line x1="0" y1="144" x2="192" y2="144" stroke="#00ff88" stroke-width="0.5" opacity="0.15"/>
+  <line x1="48" y1="0" x2="48" y2="192" stroke="#00ff88" stroke-width="0.5" opacity="0.15"/>
+  <line x1="96" y1="0" x2="96" y2="192" stroke="#00ff88" stroke-width="0.5" opacity="0.15"/>
+  <line x1="144" y1="0" x2="144" y2="192" stroke="#00ff88" stroke-width="0.5" opacity="0.15"/>
+  <!-- mirror / M shape -->
+  <text x="96" y="118" font-family="Georgia, serif" font-size="88" font-weight="bold"
+        fill="none" stroke="#00ff88" stroke-width="3"
+        text-anchor="middle" letter-spacing="-4">M</text>
+  <!-- glow dot -->
+  <circle cx="96" cy="148" r="5" fill="#00ff88" opacity="0.9"/>
+  <!-- scan line -->
+  <rect x="20" y="158" width="152" height="2" rx="1" fill="#00ff88" opacity="0.3"/>
+</svg>
