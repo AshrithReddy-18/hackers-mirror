@@ -1,0 +1,6122 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>The Hacker's Mirror</title>
+
+<!-- PWA -->
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#050a0f">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="apple-mobile-web-app-title" content="Hacker's Mirror">
+
+<link rel="apple-touch-icon" href="icon-192.svg">
+
+<!-- SEO / sharing -->
+
+<meta name="description" content="Experience how scammers exploit human behaviour. A cybersecurity awareness simulation.">
+
+<meta property="og:title" content="The Hacker's Mirror">
+
+<meta property="og:description" content="Can you spot the scam before you fall for it?">
+
+<meta property="og:type" content="website">
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+/* Safe area insets for notched phones */
+
+body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+
+</style>
+
+<style>
+
+/* ============ DESIGN SYSTEM ============ */
+
+:root {
+
+--bg: #050a0f;
+
+--surface: #0d1821;
+
+--surface2: #162030;
+
+--border: #1e3048;
+
+--accent: #00ff88;
+
+--accent2: #ff3c5a;
+
+--accent3: #ffcc00;
+
+--accent4: #00aaff;
+
+--text: #e2eaf4;
+
+--muted: #5a7a99;
+
+--phone-bg: #0a0f14;
+
+--font-display: 'Syne', sans-serif;
+
+--font-mono: 'Space Mono', monospace;
+
+}
+
+/* ============================================================
+
+UNIVERSAL SCREEN SYSTEM
+
+============================================================ */
+
+.screen{
+
+display:none;
+
+position:fixed;
+
+inset:0;
+
+width:100vw;
+
+height:100vh;
+
+padding:40px 20px;
+
+box-sizing:border-box;
+
+overflow-y:auto;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+.screen.active{
+
+display:flex;
+
+}
+
+#screen-survey {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+gap: 28px;
+
+text-align: center;
+
+}
+
+#screen-survey > div:not(.screen-header) {
+
+width: min(520px, 100%);
+
+}
+
+/* ============================================================
+
+QUIZ / RIDDLE / EDUCATION CARD
+
+============================================================ */
+
+.edu-card{
+
+width:min(620px,100%);
+
+background:rgba(8,15,25,0.92);
+
+border:1px solid rgba(0,255,136,0.12);
+
+border-radius:24px;
+
+padding:48px 40px;
+
+box-sizing:border-box;
+
+backdrop-filter:blur(14px);
+
+box-shadow:
+
+0 0 40px rgba(0,0,0,0.45),
+
+0 0 80px rgba(0,255,136,0.04);
+
+animation:fadeInUp 0.4s ease;
+
+}
+
+/* ============================================================
+
+QUIZ OPTION BUTTONS
+
+============================================================ */
+
+.verify-btn{
+
+width:100%;
+
+padding:18px;
+
+border-radius:14px;
+
+border:1px solid rgba(0,255,136,0.25);
+
+background:rgba(0,255,136,0.08);
+
+color:var(--accent);
+
+font-family:var(--font-mono);
+
+font-size:15px;
+
+cursor:pointer;
+
+transition:all 0.25s ease;
+
+}
+
+.verify-btn:hover{
+
+transform:translateY(-2px);
+
+background:rgba(0,255,136,0.14);
+
+box-shadow:
+
+0 0 20px rgba(0,255,136,0.12);
+
+}
+
+/* ============================================================
+
+ANIMATION
+
+============================================================ */
+
+@keyframes fadeInUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+
+background: var(--bg);
+
+color: var(--text);
+
+font-family: var(--font-display);
+
+min-height: 100vh;
+
+overflow-x: hidden;
+
+}
+
+/* scanline overlay */
+
+body::before {
+
+content:'';
+
+position:fixed;
+
+inset:0;
+
+background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.015) 2px, rgba(0,255,136,0.015) 4px);
+
+pointer-events:none;
+
+z-index:9999;
+
+}
+
+/* ============ HOME SCREEN ============ */
+
+#screen-home {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 40px 20px;
+
+position: relative;
+
+}
+
+.home-grid {
+
+position: absolute;
+
+inset: 0;
+
+background-image:
+
+linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
+
+linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
+
+background-size: 60px 60px;
+
+pointer-events: none;
+
+}
+
+.home-glow {
+
+position: absolute;
+
+width: 600px; height: 600px;
+
+border-radius: 50%;
+
+background: radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 70%);
+
+pointer-events: none;
+
+}
+
+.logo-badge {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+letter-spacing: 4px;
+
+color: var(--accent);
+
+text-transform: uppercase;
+
+margin-bottom: 20px;
+
+opacity: 0.8;
+
+}
+
+.home-title {
+
+font-size: clamp(42px, 8vw, 80px);
+
+font-weight: 800;
+
+line-height: 0.9;
+
+text-align: center;
+
+margin-bottom: 24px;
+
+}
+
+.home-title .line1 { color: var(--text); }
+
+.home-title .line2 {
+
+color: transparent;
+
+-webkit-text-stroke: 1px var(--accent);
+
+}
+
+.home-subtitle {
+
+font-family: var(--font-mono);
+
+font-size: 13px;
+
+color: var(--muted);
+
+text-align: center;
+
+max-width: 380px;
+
+line-height: 1.7;
+
+margin-bottom: 48px;
+
+}
+
+.stats-row {
+
+display: flex;
+
+gap: 32px;
+
+margin-bottom: 48px;
+
+}
+
+.stat-item {
+
+text-align: center;
+
+}
+
+.stat-num {
+
+font-size: 28px;
+
+font-weight: 800;
+
+color: var(--accent);
+
+display: block;
+
+}
+
+.stat-label {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: var(--muted);
+
+letter-spacing: 2px;
+
+text-transform: uppercase;
+
+}
+
+.btn-primary {
+
+background: var(--accent);
+
+color: #000;
+
+border: none;
+
+padding: 16px 48px;
+
+font-family: var(--font-display);
+
+font-size: 16px;
+
+font-weight: 800;
+
+border-radius: 4px;
+
+cursor: pointer;
+
+letter-spacing: 1px;
+
+transition: all 0.2s;
+
+position: relative;
+
+overflow: hidden;
+
+}
+
+.btn-primary::after {
+
+content: '';
+
+position: absolute;
+
+inset: 0;
+
+background: rgba(255,255,255,0.2);
+
+transform: translateX(-100%);
+
+transition: transform 0.3s;
+
+}
+
+.btn-primary:hover::after { transform: translateX(0); }
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,136,0.3); }
+
+.btn-secondary {
+
+background: transparent;
+
+color: var(--muted);
+
+border: 1px solid var(--border);
+
+padding: 12px 24px;
+
+font-family: var(--font-mono);
+
+font-size: 12px;
+
+border-radius: 4px;
+
+cursor: pointer;
+
+transition: all 0.2s;
+
+letter-spacing: 1px;
+
+}
+
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ============ PROFILE SCREEN ============ */
+
+#screen-profile {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 40px 20px;
+
+}
+
+.screen-header {
+
+text-align: center;
+
+margin-bottom: 40px;
+
+}
+
+.screen-label {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+letter-spacing: 4px;
+
+color: var(--accent);
+
+text-transform: uppercase;
+
+margin-bottom: 12px;
+
+}
+
+.screen-title {
+
+font-size: 32px;
+
+font-weight: 800;
+
+}
+
+.screen-sub {
+
+font-family: var(--font-mono);
+
+font-size: 12px;
+
+color: var(--muted);
+
+margin-top: 8px;
+
+}
+
+.profiles-grid {
+
+display: grid;
+
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+gap: 16px;
+
+max-width: 760px;
+
+width: 100%;
+
+margin-bottom: 32px;
+
+}
+
+.profile-card {
+
+background: var(--surface);
+
+border: 1px solid var(--border);
+
+border-radius: 12px;
+
+padding: 28px 20px;
+
+cursor: pointer;
+
+transition: all 0.25s;
+
+text-align: center;
+
+position: relative;
+
+overflow: hidden;
+
+}
+
+.profile-card::before {
+
+content: '';
+
+position: absolute;
+
+inset: 0;
+
+opacity: 0;
+
+transition: opacity 0.3s;
+
+}
+
+.profile-card:nth-child(1)::before { background: linear-gradient(135deg, rgba(0,255,136,0.06), transparent); }
+
+.profile-card:nth-child(2)::before { background: linear-gradient(135deg, rgba(0,170,255,0.06), transparent); }
+
+.profile-card:nth-child(3)::before { background: linear-gradient(135deg, rgba(255,204,0,0.06), transparent); }
+
+.profile-card:nth-child(4)::before { background: linear-gradient(135deg, rgba(255,60,90,0.06), transparent); }
+
+.profile-card:hover {
+
+border-color: var(--accent);
+
+transform: translateY(-4px);
+
+box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+
+}
+
+.profile-card:hover::before { opacity: 1; }
+
+.profile-emoji { font-size: 36px; margin-bottom: 12px; display: block; }
+
+.profile-name {
+
+font-size: 16px;
+
+font-weight: 800;
+
+margin-bottom: 6px;
+
+}
+
+.profile-desc {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+color: var(--muted);
+
+line-height: 1.5;
+
+}
+
+.profile-tag {
+
+display: inline-block;
+
+margin-top: 10px;
+
+padding: 3px 8px;
+
+border-radius: 4px;
+
+font-family: var(--font-mono);
+
+font-size: 9px;
+
+letter-spacing: 1px;
+
+text-transform: uppercase;
+
+}
+
+.tag-green { background: rgba(0,255,136,0.15); color: var(--accent); }
+
+.tag-blue { background: rgba(0,170,255,0.15); color: var(--accent4); }
+
+.tag-yellow{ background: rgba(255,204,0,0.15); color: var(--accent3); }
+
+.tag-red { background: rgba(255,60,90,0.15); color: var(--accent2); }
+
+/* ============ LEVEL SELECT ============ */
+
+#screen-levels {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 40px 20px;
+
+}
+
+.levels-grid {
+
+display: grid;
+
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+gap: 12px;
+
+max-width: 660px;
+
+width: 100%;
+
+margin-bottom: 32px;
+
+}
+
+.level-card {
+
+background: var(--surface);
+
+border: 1px solid var(--border);
+
+border-radius: 10px;
+
+padding: 20px 16px;
+
+cursor: pointer;
+
+transition: all 0.25s;
+
+position: relative;
+
+}
+
+.level-card:hover {
+
+border-color: var(--accent);
+
+transform: translateY(-2px);
+
+}
+
+.level-card.locked {
+
+opacity: 0.4;
+
+cursor: not-allowed;
+
+pointer-events: none;
+
+}
+
+.level-num {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: var(--muted);
+
+letter-spacing: 2px;
+
+margin-bottom: 6px;
+
+}
+
+.level-name {
+
+font-size: 14px;
+
+font-weight: 800;
+
+margin-bottom: 4px;
+
+}
+
+.level-diff {
+
+display: flex;
+
+gap: 3px;
+
+margin-top: 8px;
+
+}
+
+.diff-dot {
+
+width: 6px; height: 6px;
+
+border-radius: 50%;
+
+background: var(--border);
+
+}
+
+.diff-dot.filled { background: var(--accent); }
+
+.diff-dot.filled.hard { background: var(--accent2); }
+
+.lock-icon {
+
+position: absolute;
+
+top: 14px; right: 14px;
+
+font-size: 14px;
+
+opacity: 0.4;
+
+}
+
+/* ============ GAME SCREEN ============ */
+
+#screen-game {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: flex-start;
+
+padding: 20px;
+
+gap: 16px;
+
+}
+
+.game-hud {
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+width: 100%;
+
+max-width: 420px;
+
+padding: 12px 16px;
+
+background: var(--surface);
+
+border: 1px solid var(--border);
+
+border-radius: 10px;
+
+}
+
+.hud-item {
+
+text-align: center;
+
+}
+
+.hud-label {
+
+font-family: var(--font-mono);
+
+font-size: 9px;
+
+color: var(--muted);
+
+letter-spacing: 2px;
+
+text-transform: uppercase;
+
+}
+
+.hud-value {
+
+font-family: var(--font-mono);
+
+font-size: 18px;
+
+font-weight: 700;
+
+color: var(--accent);
+
+}
+
+.hud-value.danger { color: var(--accent2); animation: pulse 0.5s infinite; }
+
+@keyframes pulse {
+
+0%,100% { opacity: 1; }
+
+50% { opacity: 0.4; }
+
+}
+
+/* phone frame */
+
+.phone-frame {
+
+width: 360px;
+
+height: 620px;
+
+background: var(--phone-bg);
+
+border-radius: 44px;
+
+border: 8px solid #1a2535;
+
+position: relative;
+
+overflow: hidden;
+
+box-shadow:
+
+0 0 0 1px #0d1821,
+
+0 30px 80px rgba(0,0,0,0.8),
+
+inset 0 0 0 1px rgba(255,255,255,0.04);
+
+flex-shrink: 0;
+
+}
+
+/* phone notch */
+
+.phone-notch {
+
+position: absolute;
+
+top: 0; left: 50%;
+
+transform: translateX(-50%);
+
+width: 120px; height: 28px;
+
+background: #111820;
+
+border-radius: 0 0 20px 20px;
+
+z-index: 10;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+gap: 6px;
+
+}
+
+.notch-cam {
+
+width: 8px; height: 8px;
+
+background: #1e3048;
+
+border-radius: 50%;
+
+}
+
+.notch-speaker {
+
+width: 40px; height: 4px;
+
+background: #1e3048;
+
+border-radius: 4px;
+
+}
+
+/* phone status bar */
+
+.phone-statusbar {
+
+position: absolute;
+
+top: 28px; left: 0; right: 0;
+
+height: 28px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+padding: 0 20px;
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: rgba(255,255,255,0.6);
+
+z-index: 5;
+
+}
+
+/* phone home screen */
+
+.phone-home {
+
+position: absolute;
+
+inset: 0;
+
+background: linear-gradient(160deg, #0d1f35, #0a1520);
+
+padding-top: 60px;
+
+}
+
+.phone-time {
+
+text-align: center;
+
+margin-top: 20px;
+
+}
+
+.phone-time-big {
+
+font-size: 52px;
+
+font-weight: 300;
+
+color: rgba(255,255,255,0.9);
+
+letter-spacing: -2px;
+
+font-family: var(--font-display);
+
+}
+
+.phone-time-date {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+color: rgba(255,255,255,0.4);
+
+margin-top: 4px;
+
+}
+
+/* notification banner */
+
+.phone-notif {
+
+position: absolute;
+
+top: 70px;
+
+left: 12px; right: 12px;
+
+background: rgba(20,35,55,0.95);
+
+border: 1px solid rgba(255,255,255,0.08);
+
+border-radius: 16px;
+
+padding: 14px 16px;
+
+cursor: pointer;
+
+display: none;
+
+backdrop-filter: blur(20px);
+
+transition: all 0.3s;
+
+z-index: 20;
+
+}
+
+.phone-notif:hover {
+
+background: rgba(30,50,75,0.98);
+
+transform: scale(1.01);
+
+}
+
+.notif-header {
+
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+
+margin-bottom: 6px;
+
+}
+
+.notif-app-icon {
+
+width: 18px; height: 18px;
+
+border-radius: 5px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+font-size: 10px;
+
+font-weight: bold;
+
+flex-shrink: 0;
+
+}
+
+.notif-app-name {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: rgba(255,255,255,0.5);
+
+letter-spacing: 1px;
+
+}
+
+.notif-time {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: rgba(255,255,255,0.3);
+
+margin-left: auto;
+
+}
+
+.notif-sender {
+
+font-size: 13px;
+
+font-weight: 700;
+
+color: rgba(255,255,255,0.95);
+
+margin-bottom: 3px;
+
+}
+
+.notif-preview {
+
+font-size: 12px;
+
+color: rgba(255,255,255,0.55);
+
+line-height: 1.4;
+
+}
+
+/* chat view */
+
+.phone-chat {
+
+position: absolute;
+
+inset: 0;
+
+background: var(--app-chat-bg, #0d1520);
+
+display: none;
+
+flex-direction: column;
+
+}
+
+.chat-header {
+
+background: rgba(13,25,40,0.95);
+
+padding: 56px 16px 14px;
+
+border-bottom: 1px solid rgba(255,255,255,0.06);
+
+display: flex;
+
+align-items: center;
+
+gap: 10px;
+
+}
+
+.chat-avatar {
+
+width: 36px; height: 36px;
+
+border-radius: 50%;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+font-size: 16px;
+
+flex-shrink: 0;
+
+}
+
+.chat-info { flex: 1; }
+
+.chat-name {
+
+font-size: 14px;
+
+font-weight: 700;
+
+}
+
+.chat-status {
+
+font-family: var(--font-mono);
+
+font-size: 9px;
+
+color: var(--accent);
+
+letter-spacing: 1px;
+
+}
+
+.chat-body {
+
+flex: 1;
+
+padding: 16px;
+
+overflow-y: auto;
+
+}
+
+.chat-bubble {
+
+background: rgba(30,50,75,0.6);
+
+border: 1px solid rgba(255,255,255,0.07);
+
+border-radius: 16px 16px 16px 4px;
+
+padding: 12px 14px;
+
+max-width: 85%;
+
+margin-bottom: 8px;
+
+font-size: 13px;
+
+line-height: 1.5;
+
+}
+
+.pressure-bubble {
+
+background: rgba(255,60,90,0.1);
+
+border-color: rgba(255,60,90,0.2);
+
+animation: shakein 0.3s ease;
+
+}
+
+@keyframes shakein {
+
+0% { transform: translateX(-5px); }
+
+50% { transform: translateX(3px); }
+
+100% { transform: translateX(0); }
+
+}
+
+.chat-footer {
+
+padding: 12px 16px;
+
+border-top: 1px solid rgba(255,255,255,0.06);
+
+display: flex;
+
+flex-direction: column;
+
+gap: 8px;
+
+}
+
+.scam-link-btn {
+
+background: rgba(255,60,90,0.12);
+
+border: 1px solid rgba(255,60,90,0.25);
+
+color: #ff6b84;
+
+padding: 10px 14px;
+
+border-radius: 10px;
+
+cursor: pointer;
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+text-align: center;
+
+transition: all 0.2s;
+
+text-decoration: none;
+
+display: block;
+
+}
+
+.scam-link-btn:hover {
+
+background: rgba(255,60,90,0.22);
+
+}
+
+.verify-btn {
+
+background: rgba(0,255,136,0.12);
+
+border: 1px solid rgba(0,255,136,0.25);
+
+color: var(--accent);
+
+padding: 10px 14px;
+
+border-radius: 10px;
+
+cursor: pointer;
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+text-align: center;
+
+transition: all 0.2s;
+
+width: 100%;
+
+}
+
+.verify-btn:hover {
+
+background: rgba(0,255,136,0.22);
+
+}
+
+/* pressure timer bar */
+
+.timer-track {
+
+height: 3px;
+
+background: var(--border);
+
+border-radius: 4px;
+
+overflow: hidden;
+
+position: absolute;
+
+bottom: 0; left: 0; right: 0;
+
+z-index: 10;
+
+}
+
+.timer-fill {
+
+height: 100%;
+
+background: var(--accent);
+
+transition: width 1s linear, background 0.3s;
+
+width: 100%;
+
+}
+
+/* ignore hint */
+
+.ignore-hint {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: var(--muted);
+
+text-align: center;
+
+max-width: 360px;
+
+}
+
+/* ============ MIRROR SCREEN ============ */
+
+#screen-mirror {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 40px 20px;
+
+min-height: 100vh;
+
+}
+
+.mirror-card {
+
+background: var(--surface);
+
+border: 1px solid var(--border);
+
+border-radius: 16px;
+
+padding: 40px;
+
+max-width: 500px;
+
+width: 100%;
+
+position: relative;
+
+overflow: hidden;
+
+}
+
+.mirror-card::before {
+
+content: '';
+
+position: absolute;
+
+top: -60px; right: -60px;
+
+width: 200px; height: 200px;
+
+border-radius: 50%;
+
+pointer-events: none;
+
+}
+
+.mirror-card.outcome-bad::before { background: radial-gradient(circle, rgba(255,60,90,0.12), transparent 70%); }
+
+.mirror-card.outcome-verify::before { background: radial-gradient(circle, rgba(0,255,136,0.12), transparent 70%); }
+
+.mirror-card.outcome-ignore::before { background: radial-gradient(circle, rgba(255,204,0,0.12), transparent 70%); }
+
+.mirror-verdict {
+
+font-size: 11px;
+
+font-family: var(--font-mono);
+
+letter-spacing: 3px;
+
+text-transform: uppercase;
+
+margin-bottom: 12px;
+
+}
+
+.verdict-bad { color: var(--accent2); }
+
+.verdict-verify { color: var(--accent); }
+
+.verdict-ignore { color: var(--accent3); }
+
+.mirror-title {
+
+font-size: 28px;
+
+font-weight: 800;
+
+margin-bottom: 24px;
+
+line-height: 1.2;
+
+}
+
+.mirror-stats {
+
+display: grid;
+
+grid-template-columns: 1fr 1fr 1fr;
+
+gap: 12px;
+
+margin-bottom: 24px;
+
+}
+
+.mstat {
+
+background: var(--surface2);
+
+border: 1px solid var(--border);
+
+border-radius: 10px;
+
+padding: 14px 10px;
+
+text-align: center;
+
+}
+
+.mstat-val {
+
+font-family: var(--font-mono);
+
+font-size: 20px;
+
+font-weight: 700;
+
+color: var(--accent);
+
+display: block;
+
+}
+
+.mstat-label {
+
+font-family: var(--font-mono);
+
+font-size: 9px;
+
+color: var(--muted);
+
+letter-spacing: 1px;
+
+text-transform: uppercase;
+
+margin-top: 4px;
+
+display: block;
+
+}
+
+.mirror-joke {
+
+font-size: 15px;
+
+font-weight: 600;
+
+color: var(--text);
+
+margin-bottom: 24px;
+
+padding: 16px;
+
+background: var(--surface2);
+
+border-radius: 10px;
+
+border-left: 3px solid currentColor;
+
+line-height: 1.5;
+
+}
+
+.mirror-joke.joke-bad { border-color: var(--accent2); color: #ff8fa0; }
+
+.mirror-joke.joke-good { border-color: var(--accent); color: #7dffc5; }
+
+.mirror-joke.joke-mid { border-color: var(--accent3); color: #ffe066; }
+
+/* ============ ANALYTICS SCREEN ============ */
+
+#screen-analytics {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 40px 20px;
+
+min-height: 100vh;
+
+}
+
+.analytics-card {
+
+width: min(760px, 100%);
+
+background: rgba(8,15,25,0.96);
+
+border: 1px solid var(--border);
+
+border-radius: 24px;
+
+padding: 40px;
+
+box-sizing: border-box;
+
+}
+
+.analytics-header {
+
+display: flex;
+
+justify-content: space-between;
+
+gap: 24px;
+
+flex-wrap: wrap;
+
+margin-bottom: 24px;
+
+}
+
+.analytics-label {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+letter-spacing: 1px;
+
+color: var(--muted);
+
+text-transform: uppercase;
+
+margin-bottom: 12px;
+
+}
+
+.analytics-title {
+
+font-size: 32px;
+
+font-weight: 800;
+
+margin: 0;
+
+line-height: 1.05;
+
+}
+
+.analytics-summary {
+
+max-width: 560px;
+
+font-size: 15px;
+
+line-height: 1.7;
+
+color: var(--muted);
+
+margin-top: 10px;
+
+}
+
+.analytics-badge {
+
+background: var(--surface2);
+
+border: 1px solid var(--border);
+
+border-radius: 18px;
+
+padding: 22px 24px;
+
+min-width: 160px;
+
+text-align: center;
+
+}
+
+.analytics-badge-label {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+letter-spacing: 1px;
+
+color: var(--muted);
+
+text-transform: uppercase;
+
+margin-bottom: 8px;
+
+}
+
+.analytics-badge-value {
+
+font-family: var(--font-mono);
+
+font-size: 30px;
+
+font-weight: 700;
+
+color: var(--accent);
+
+}
+
+.analytics-grid {
+
+display: grid;
+
+grid-template-columns: repeat(3, minmax(0, 1fr));
+
+gap: 16px;
+
+margin-bottom: 24px;
+
+}
+
+.analytics-metric {
+
+background: var(--surface2);
+
+border: 1px solid var(--border);
+
+border-radius: 18px;
+
+padding: 20px;
+
+}
+
+.analytics-metric-label {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+letter-spacing: 1px;
+
+color: var(--muted);
+
+text-transform: uppercase;
+
+margin-bottom: 10px;
+
+display: block;
+
+}
+
+.analytics-metric-value {
+
+font-family: var(--font-mono);
+
+font-size: 24px;
+
+font-weight: 700;
+
+color: var(--accent);
+
+}
+
+.analytics-actions {
+
+display: grid;
+
+gap: 14px;
+
+margin-bottom: 24px;
+
+}
+
+.analytics-tip {
+
+display: flex;
+
+gap: 12px;
+
+align-items: flex-start;
+
+background: var(--surface2);
+
+border: 1px solid var(--border);
+
+border-radius: 16px;
+
+padding: 18px;
+
+line-height: 1.6;
+
+}
+
+.tip-dot {
+
+width: 10px;
+
+height: 10px;
+
+border-radius: 50%;
+
+background: var(--accent);
+
+margin-top: 6px;
+
+flex-shrink: 0;
+
+}
+
+/* ============ PSYCHOLOGY SCREEN ============ */
+
+#screen-edu,
+
+#screen-edu-standalone {
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 40px 20px;
+
+min-height: 100vh;
+
+}
+
+.edu-heading {
+
+font-size: 22px;
+
+font-weight: 800;
+
+margin-bottom: 6px;
+
+}
+
+.edu-sub {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+color: var(--muted);
+
+margin-bottom: 28px;
+
+}
+
+.trigger-list {
+
+display: flex;
+
+flex-direction: column;
+
+gap: 12px;
+
+margin-bottom: 28px;
+
+}
+
+.trigger-item {
+
+display: flex;
+
+gap: 14px;
+
+align-items: flex-start;
+
+padding: 14px;
+
+background: var(--surface2);
+
+border-radius: 10px;
+
+border: 1px solid var(--border);
+
+transition: border-color 0.2s;
+
+}
+
+.trigger-item:hover { border-color: rgba(255,255,255,0.15); }
+
+.trigger-icon {
+
+font-size: 22px;
+
+flex-shrink: 0;
+
+line-height: 1;
+
+}
+
+.trigger-name {
+
+font-size: 13px;
+
+font-weight: 700;
+
+margin-bottom: 4px;
+
+}
+
+.trigger-desc {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+color: var(--muted);
+
+line-height: 1.5;
+
+}
+
+.trigger-example {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+color: var(--accent2);
+
+margin-top: 6px;
+
+background: rgba(255,60,90,0.08);
+
+padding: 6px 8px;
+
+border-radius: 6px;
+
+}
+
+.redflags-section {
+
+margin-bottom: 28px;
+
+}
+
+.redflags-title {
+
+font-size: 14px;
+
+font-weight: 700;
+
+margin-bottom: 12px;
+
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+
+}
+
+.redflags-grid {
+
+display: grid;
+
+grid-template-columns: 1fr 1fr;
+
+gap: 8px;
+
+}
+
+.redflag {
+
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+
+padding: 10px 12px;
+
+background: var(--surface2);
+
+border-radius: 8px;
+
+border: 1px solid rgba(255,60,90,0.15);
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+color: var(--muted);
+
+}
+
+.rf-dot {
+
+width: 6px; height: 6px;
+
+border-radius: 50%;
+
+background: var(--accent2);
+
+flex-shrink: 0;
+
+}
+
+/* ============ SCOREBOARD ============ */
+
+.score-track {
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+padding: 12px 16px;
+
+background: var(--surface2);
+
+border-radius: 8px;
+
+margin-bottom: 8px;
+
+border: 1px solid var(--border);
+
+}
+
+.score-level { font-size: 13px; font-weight: 700; }
+
+.score-pts { font-family: var(--font-mono); font-size: 14px; color: var(--accent); }
+
+/* ============ BUTTONS ROW ============ */
+
+.btn-row {
+
+display: flex;
+
+gap: 12px;
+
+flex-wrap: wrap;
+
+justify-content: center;
+
+margin-top: 20px;
+
+}
+
+/* ============ PROGRESS BAR ============ */
+
+.progress-bar {
+
+width: 100%;
+
+max-width: 420px;
+
+height: 4px;
+
+background: var(--border);
+
+border-radius: 4px;
+
+overflow: hidden;
+
+}
+
+.progress-fill {
+
+height: 100%;
+
+background: var(--accent);
+
+border-radius: 4px;
+
+transition: width 0.5s ease;
+
+}
+
+/* ============ SURVEY ============ */
+
+.survey-input{
+
+width:100%;
+
+margin-top:8px;
+
+background:var(--surface);
+
+border:1px solid var(--border);
+
+color:var(--text);
+
+padding:14px;
+
+border-radius:10px;
+
+font-family:var(--font-mono);
+
+font-size:13px;
+
+outline:none;
+
+transition:all 0.2s;
+
+}
+
+.survey-input:focus{
+
+border-color:var(--accent);
+
+box-shadow:0 0 0 3px rgba(0,255,136,0.08);
+
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 500px) {
+
+.phone-frame { width: 320px; height: 560px; }
+
+.mirror-stats { grid-template-columns: 1fr 1fr; }
+
+.redflags-grid { grid-template-columns: 1fr; }
+
+}
+
+/* ============ EXPLAINER ANIMATION SCREEN ============ */
+
+#screen-explainer {
+
+flex-direction: column;
+
+align-items: stretch;
+
+justify-content: flex-start;
+
+padding: 0;
+
+min-height: 100vh;
+
+background: var(--bg);
+
+position: relative;
+
+}
+
+.exp-topbar {
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+padding: 16px 20px 12px;
+
+background: var(--surface);
+
+border-bottom: 1px solid var(--border);
+
+flex-shrink: 0;
+
+}
+
+.exp-title { font-size: 13px; font-weight: 800; color: var(--text); }
+
+.exp-skip {
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+color: var(--muted);
+
+background: none;
+
+border: 1px solid var(--border);
+
+padding: 6px 14px;
+
+border-radius: 6px;
+
+cursor: pointer;
+
+transition: all 0.2s;
+
+}
+
+.exp-skip:hover { color: var(--text); border-color: var(--muted); }
+
+.exp-dots { display: flex; gap: 6px; align-items: center; }
+
+.exp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+
+.exp-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+
+.exp-dot.done { background: var(--muted); }
+
+.exp-stage { flex: 1; position: relative; overflow: hidden; min-height: 360px; }
+
+.exp-panel {
+
+position: absolute;
+
+inset: 0;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 24px 20px;
+
+opacity: 0;
+
+transform: translateX(60px);
+
+transition: all 0.45s cubic-bezier(0.4,0,0.2,1);
+
+pointer-events: none;
+
+}
+
+.exp-panel.entering { opacity: 1; transform: translateX(0); pointer-events: all; }
+
+.exp-panel.exiting { opacity: 0; transform: translateX(-60px); }
+
+.exp-canvas {
+
+width: 100%;
+
+max-width: 340px;
+
+height: 200px;
+
+position: relative;
+
+margin-bottom: 20px;
+
+flex-shrink: 0;
+
+}
+
+.exp-panel-label {
+
+font-family: var(--font-mono);
+
+font-size: 10px;
+
+letter-spacing: 3px;
+
+text-transform: uppercase;
+
+color: var(--accent);
+
+margin-bottom: 8px;
+
+text-align: center;
+
+}
+
+.exp-panel-heading { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 10px; line-height: 1.2; }
+
+.exp-panel-body { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: center; line-height: 1.7; max-width: 300px; }
+
+.exp-panel-body strong { color: var(--text); }
+
+.exp-bottom {
+
+padding: 16px 20px 24px;
+
+display: flex;
+
+gap: 10px;
+
+flex-shrink: 0;
+
+background: var(--surface);
+
+border-top: 1px solid var(--border);
+
+}
+
+.exp-btn-next {
+
+flex: 1;
+
+background: var(--accent);
+
+color: #000;
+
+border: none;
+
+padding: 14px;
+
+border-radius: 8px;
+
+font-family: var(--font-display);
+
+font-size: 15px;
+
+font-weight: 800;
+
+cursor: pointer;
+
+transition: all 0.2s;
+
+}
+
+.exp-btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.exp-btn-replay {
+
+background: var(--surface2);
+
+color: var(--muted);
+
+border: 1px solid var(--border);
+
+padding: 14px 18px;
+
+border-radius: 8px;
+
+font-family: var(--font-mono);
+
+font-size: 11px;
+
+cursor: pointer;
+
+transition: all 0.2s;
+
+}
+
+.exp-btn-replay:hover { color: var(--text); border-color: var(--muted); }
+
+/* cartoon primitives */
+
+.char { position: absolute; display: flex; flex-direction: column; align-items: center; animation-fill-mode: both; }
+
+.bubble-speech {
+
+position: absolute;
+
+background: #fff; color: #111;
+
+border-radius: 16px; padding: 8px 12px;
+
+font-size: 11px; font-weight: 700; line-height: 1.4;
+
+max-width: 140px; text-align: center;
+
+box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+
+transform-origin: bottom center;
+
+}
+
+.bubble-speech::after {
+
+content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+
+border: 8px solid transparent; border-top-color: #fff; border-bottom: 0;
+
+}
+
+.bubble-speech.red-bubble { background: #ff3c5a; color: #fff; }
+
+.bubble-speech.red-bubble::after { border-top-color: #ff3c5a; }
+
+.bubble-speech.green-bubble { background: #00ff88; color: #000; }
+
+.bubble-speech.green-bubble::after { border-top-color: #00ff88; }
+
+.float-badge { position: absolute; font-size: 28px; animation: floatBadge 2s ease-in-out infinite; }
+
+@keyframes floatBadge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.prop-phone { width:52px;height:90px;background:#1a2535;border-radius:10px;border:3px solid #2a3f5f;position:relative;overflow:hidden; }
+
+.prop-phone::before { content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:16px;height:3px;background:#2a3f5f;border-radius:3px; }
+
+.scammer-body { width:44px;height:44px;background:#ff3c5a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 20px rgba(255,60,90,0.4); }
+
+.victim-body { width:44px;height:44px;background:#1e4060;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px; }
+
+@keyframes moneyFly { 0%{transform:translate(0,0) scale(1);opacity:1} 100%{transform:translate(80px,-40px) scale(0.3);opacity:0} }
+
+.money-fly { animation: moneyFly 1.2s ease-in forwards; }
+
+@keyframes warnPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+.warn-pulse { animation: warnPulse 0.8s ease-in-out infinite; }
+
+@keyframes shieldPop { 0%{transform:scale(0) rotate(-20deg);opacity:0} 60%{transform:scale(1.2) rotate(5deg);opacity:1} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+
+.shield-pop { animation: shieldPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+@keyframes slideInR { from{transform:translateX(60px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+.slide-in-r { animation: slideInR 0.5s ease forwards; }
+
+@keyframes bounceIn { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
+
+.bounce-in { animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+.scene-dark { background:radial-gradient(ellipse at 50% 60%,#0d1f35 0%,#050a0f 100%);border-radius:16px;border:1px solid var(--border); }
+
+.scene-red { background:radial-gradient(ellipse at 50% 60%,#1f0810 0%,#050a0f 100%);border-radius:16px;border:1px solid rgba(255,60,90,0.2); }
+
+.scene-green { background:radial-gradient(ellipse at 50% 60%,#061a0f 0%,#050a0f 100%);border-radius:16px;border:1px solid rgba(0,255,136,0.15); }
+
+.scene-amber { background:radial-gradient(ellipse at 50% 60%,#1a1200 0%,#050a0f 100%);border-radius:16px;border:1px solid rgba(255,204,0,0.15); }
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ===================== HOME ===================== -->
+
+<div class="screen active" id="screen-home">
+
+<div class="home-grid"></div>
+
+<div class="home-glow"></div>
+
+<div class="logo-badge">Cybersecurity Awareness</div>
+
+<div class="home-title">
+
+<div class="line1">THE HACKER'S</div>
+
+<div class="line2">MIRROR</div>
+
+</div>
+
+<p class="home-subtitle">A simulation that reveals how scammers exploit human behaviour — and how you actually respond under pressure.</p>
+
+<div class="stats-row">
+
+<div class="stat-item">
+
+<span class="stat-num">6</span>
+
+<span class="stat-label">Scam Types</span>
+
+</div>
+
+<div class="stat-item">
+
+<span class="stat-num">4</span>
+
+<span class="stat-label">Profiles</span>
+
+</div>
+
+<div class="stat-item">
+
+<span class="stat-num">3</span>
+
+<span class="stat-label">Difficulty Levels</span>
+
+</div>
+
+</div>
+
+<button class="btn-primary" onclick="goTo('screen-survey')">Start Simulation →</button>
+
+<div >
+
+<button class="btn-secondary" onclick="goTo('screen-edu-standalone')">🧠 Learn About Scams</button>
+
+</div>
+
+</div>
+
+<!-- ===================== SURVEY ===================== -->
+
+<div class="screen" id="screen-survey">
+
+<div class="screen-header">
+
+<div class="screen-label">Step 1 of 4</div>
+
+<h2 class="screen-title">Player Survey</h2>
+
+<p class="screen-sub">
+
+Customize your cyber simulation experience
+
+</p>
+
+</div>
+
+<div >
+
+<div>
+
+<label class="screen-sub">Most Used App</label>
+
+<select id="survey-app" class="survey-input" onchange="applyAppTheme()">
+
+<option value="whatsapp">WhatsApp</option>
+
+<option value="instagram">Instagram</option>
+
+<option value="gmail">Gmail</option>
+
+<option value="telegram">Telegram</option>
+
+<option value="discord">Discord</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label class="screen-sub">Cyber Awareness Confidence</label>
+
+<select id="survey-confidence" class="survey-input">
+
+<option value="low">Beginner</option>
+
+<option value="medium">Intermediate</option>
+
+<option value="high">Advanced</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label class="screen-sub">Have You Experienced Online Scams?</label>
+
+<select id="survey-experience" class="survey-input">
+
+<option value="no">No</option>
+
+<option value="yes">Yes</option>
+
+</select>
+
+</div>
+
+<button class="btn-primary" onclick="submitSurvey()">
+
+Continue →
+
+</button>
+
+<button class="btn-secondary" onclick="goTo('screen-home')">
+
+← Back
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ===================== PROFILE SELECT ===================== -->
+
+<div class="screen" id="screen-profile">
+
+<div class="screen-header">
+
+<div class="screen-label">Step 1 of 3</div>
+
+<h2 class="screen-title">Choose Your Profile</h2>
+
+<p class="screen-sub">Each profile faces scams targeting their specific vulnerabilities</p>
+
+</div>
+
+<div class="profiles-grid">
+
+<div class="profile-card" onclick="selectProfile('student')">
+
+<span class="profile-emoji">🎓</span>
+
+<div class="profile-name">Student</div>
+
+<div class="profile-desc">College student looking for jobs & internships</div>
+
+<span class="profile-tag tag-green">Internship / Job Scams</span>
+
+</div>
+
+<div class="profile-card" onclick="selectProfile('professional')">
+
+<span class="profile-emoji">💼</span>
+
+<div class="profile-name">Professional</div>
+
+<div class="profile-desc">Working adult with banking & investment activity</div>
+
+<span class="profile-tag tag-blue">Banking / OTP Scams</span>
+
+</div>
+
+<div class="profile-card" onclick="selectProfile('senior')">
+
+<span class="profile-emoji">🏠</span>
+
+<div class="profile-name">Senior Citizen</div>
+
+<div class="profile-desc">Retired, pension-dependent, less tech-familiar</div>
+
+<span class="profile-tag tag-yellow">Pension / KYC Scams</span>
+
+</div>
+
+<div class="profile-card" onclick="selectProfile('teen')">
+
+<span class="profile-emoji">📱</span>
+
+<div class="profile-name">Teenager</div>
+
+<div class="profile-desc">Heavy social media user, gaming, online orders</div>
+
+<span class="profile-tag tag-red">Gaming / Social Scams</span>
+
+</div>
+
+</div>
+
+<button class="btn-secondary" onclick="goTo('screen-home')">← Back</button>
+
+</div>
+
+<!-- ===================== LEVEL SELECT ===================== -->
+
+<div class="screen" id="screen-levels">
+
+<div class="screen-header">
+
+<div class="screen-label">Step 2 of 3</div>
+
+<h2 class="screen-title">Choose Difficulty</h2>
+
+<p class="screen-sub" id="levels-profile-name">Profile selected</p>
+
+</div>
+
+<div class="levels-grid">
+
+<div class="level-card" onclick="selectLevel(1)">
+
+<div class="level-num">LEVEL 01</div>
+
+<div class="level-name">Obvious Bait</div>
+
+<div >Red flags everywhere</div>
+
+<div class="level-diff">
+
+<div class="diff-dot filled"></div>
+
+<div class="diff-dot"></div>
+
+<div class="diff-dot"></div>
+
+</div>
+
+</div>
+
+<div class="level-card" onclick="selectLevel(2)">
+
+<div class="level-num">LEVEL 02</div>
+
+<div class="level-name">Convincing</div>
+
+<div >Looks semi-legitimate</div>
+
+<div class="level-diff">
+
+<div class="diff-dot filled"></div>
+
+<div class="diff-dot filled"></div>
+
+<div class="diff-dot"></div>
+
+</div>
+
+</div>
+
+<div class="level-card" onclick="selectLevel(3)">
+
+<div class="level-num">LEVEL 03</div>
+
+<div class="level-name">Expert Forgery</div>
+
+<div >Near-perfect imitation</div>
+
+<div class="level-diff">
+
+<div class="diff-dot filled hard"></div>
+
+<div class="diff-dot filled hard"></div>
+
+<div class="diff-dot filled hard"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<button class="btn-secondary" onclick="goTo('screen-profile')">← Back</button>
+
+</div>
+
+<!-- ===================== GAME ===================== -->
+
+<div class="screen" id="screen-game">
+
+<div class="game-hud">
+
+<div class="hud-item">
+
+<div class="hud-label">Profile</div>
+
+<div class="hud-value" id="hud-profile" >—</div>
+
+</div>
+
+<div class="hud-item">
+
+<div class="hud-label">Level</div>
+
+<div class="hud-value" id="hud-level">1</div>
+
+</div>
+
+<div class="hud-item">
+
+<div class="hud-label">Timer</div>
+
+<div class="hud-value" id="hud-timer">10</div>
+
+</div>
+
+<div class="hud-item">
+
+<div class="hud-label">Score</div>
+
+<div class="hud-value" id="hud-score">0</div>
+
+</div>
+
+</div>
+
+<div class="progress-bar">
+
+<div class="progress-fill" id="progress-fill" ></div>
+
+</div>
+
+<div class="phone-frame" id="phone-screen">
+
+<div class="phone-notch">
+
+<div class="notch-cam"></div>
+
+<div class="notch-speaker"></div>
+
+</div>
+
+<div class="phone-statusbar">
+
+<span id="phone-time-small">9:41</span>
+
+<span>▲ ⬛⬛⬛ 📶</span>
+
+</div>
+
+<!-- home screen -->
+
+<div class="phone-home" id="phone-home">
+
+<div class="phone-time">
+
+<div class="phone-time-big" id="phone-clock">9:41</div>
+
+<div class="phone-time-date" id="phone-date">Monday, 17 March</div>
+
+</div>
+
+</div>
+
+<!-- notification -->
+
+<div class="phone-notif" id="phone-notif" onclick="openChat()">
+
+<div class="notif-header">
+
+<div class="notif-app-icon" id="notif-icon">💬</div>
+
+<div class="notif-app-name" id="notif-app">Messages</div>
+
+<div class="notif-time">now</div>
+
+</div>
+
+<div class="notif-sender" id="notif-sender">Loading…</div>
+
+<div class="notif-preview" id="notif-preview">Loading…</div>
+
+</div>
+
+<!-- chat view -->
+
+<div class="phone-chat" id="phone-chat">
+
+<div class="chat-header" id="chat-header">
+
+<div class="chat-avatar" id="chat-avatar">💬</div>
+
+<div class="chat-info">
+
+<div class="chat-name" id="chat-name">Sender</div>
+
+<div class="chat-status">● Online</div>
+
+</div>
+
+</div>
+
+<div class="chat-body" id="chat-body"></div>
+
+<div class="chat-footer">
+
+<button class="scam-link-btn" id="scam-link-btn" onclick="choose('bad')">⚠ Loading…</button>
+
+<button class="verify-btn" onclick="choose('verify')">🔍 Verify Source</button>
+
+</div>
+
+</div>
+
+<!-- timer bar -->
+
+<div class="timer-track">
+
+<div class="timer-fill" id="timer-fill"></div>
+
+</div>
+
+</div>
+
+<div class="ignore-hint">Swipe notification left or press <strong>I</strong> to ignore</div>
+
+</div>
+
+<!-- ===================== MIRROR REVEAL ===================== -->
+
+<div class="screen" id="screen-mirror">
+
+<div class="mirror-card" id="mirror-card">
+
+<div class="mirror-verdict" id="mirror-verdict">Risk Level: HIGH</div>
+
+<h2 class="mirror-title" id="mirror-title">You fell for it.</h2>
+
+<div class="mirror-stats">
+
+<div class="mstat">
+
+<span class="mstat-val" id="mstat-reaction">—</span>
+
+<span class="mstat-label">Reaction (s)</span>
+
+</div>
+
+<div class="mstat">
+
+<span class="mstat-val" id="mstat-score">—</span>
+
+<span class="mstat-label">Score</span>
+
+</div>
+
+<div class="mstat">
+
+<span class="mstat-val" id="mstat-stage">—</span>
+
+<span class="mstat-label">Held Out</span>
+
+</div>
+
+</div>
+
+<div class="mirror-joke" id="mirror-joke"></div>
+
+<!-- scam breakdown -->
+
+<div class="redflags-section" id="mirror-redflags"></div>
+
+<div class="btn-row">
+
+<button class="btn-primary" onclick="showAnalytics()">📊 View Analytics</button>
+
+<button class="btn-primary" onclick="goTo('screen-edu-standalone')">🧠 Why It Works</button>
+
+<button class="btn-secondary" onclick="goTo('screen-levels')">↺ Try Again</button>
+
+<button class="btn-secondary" onclick="goTo('screen-home')">⌂ Home</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===================== ANALYTICS DASHBOARD -->
+
+<div class="screen" id="screen-analytics">
+
+<div class="analytics-card">
+
+<div class="analytics-header">
+
+<div>
+
+<div class="analytics-label">Analytics Dashboard</div>
+
+<h2 class="analytics-title" id="analytics-title">Level Analysis</h2>
+
+<div class="analytics-summary" id="analytics-summary">Your awareness report will appear here after you finish a level.</div>
+
+</div>
+
+<div class="analytics-badge">
+
+<div class="analytics-badge-label">Total Score</div>
+
+<div class="analytics-badge-value" id="analytics-score">0</div>
+
+</div>
+
+</div>
+
+<div class="analytics-grid">
+
+<div class="analytics-metric">
+
+<div class="analytics-metric-label">Level</div>
+
+<div class="analytics-metric-value" id="analytics-level">—</div>
+
+</div>
+
+<div class="analytics-metric">
+
+<div class="analytics-metric-label">Last Level Points</div>
+
+<div class="analytics-metric-value" id="analytics-points">0 pts</div>
+
+</div>
+
+<div class="analytics-metric">
+
+<div class="analytics-metric-label">Awareness Rating</div>
+
+<div class="analytics-metric-value" id="analytics-rating">—</div>
+
+</div>
+
+</div>
+
+<div class="analytics-actions" id="analytics-tips"></div>
+
+<div class="btn-row">
+
+<button class="btn-primary" onclick="startQuiz()">🧠 Practice Quiz</button>
+
+<button class="btn-secondary" onclick="goTo('screen-edu-standalone')">🔍 Review Scams</button>
+
+<button class="btn-secondary" onclick="goTo('screen-home')">⌂ Home</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===================== QUIZ ===================== -->
+
+<div class="screen" id="screen-quiz">
+
+
+
+<div class="edu-card">
+
+<div class="screen-label">
+
+Knowledge Check
+
+</div>
+
+<h2 class="edu-heading" id="quiz-question">
+
+Question
+
+</h2>
+
+<p class="edu-sub">
+
+Test your scam detection skills
+
+</p>
+
+<div
+
+id="quiz-options"
+
+></div>
+
+<div class="btn-row">
+
+<button
+
+class="btn-secondary"
+
+onclick="goTo('screen-home')"
+
+>
+
+Exit
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===================== RIDDLE ===================== -->
+
+<div class="screen" id="screen-riddle">
+
+
+
+<div class="edu-card">
+
+<div class="screen-label">
+
+Cyber Riddle
+
+</div>
+
+<h2 class="edu-heading" id="riddle-text">
+
+Riddle
+
+</h2>
+
+<p class="edu-sub">
+
+Think carefully before answering
+
+</p>
+
+<input
+
+id="riddle-answer"
+
+class="survey-input"
+
+placeholder="Type your answer..."
+
+>
+
+<div class="btn-row">
+
+<button
+
+class="btn-primary"
+
+onclick="submitRiddle()"
+
+>
+
+Submit Answer
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===================== EDUCATION (standalone) ===================== -->
+
+<div class="screen" id="screen-edu-standalone">
+
+<div class="edu-card">
+
+<div class="screen-label">Psychology of Scams</div>
+
+<h2 class="edu-heading">Why Smart People Get Fooled</h2>
+
+<p class="edu-sub">Scammers don't exploit stupidity — they exploit human psychology</p>
+
+<div class="trigger-list">
+
+<div class="trigger-item">
+
+<div class="trigger-icon">⏱</div>
+
+<div>
+
+<div class="trigger-name">Urgency & Time Pressure</div>
+
+<div class="trigger-desc">Artificial deadlines force you to act before you can think. Your brain's threat-response overrides rational evaluation.</div>
+
+<div class="trigger-example">"Your account will be locked in 30 minutes!"</div>
+
+</div>
+
+</div>
+
+<div class="trigger-item">
+
+<div class="trigger-icon">🏛</div>
+
+<div>
+
+<div class="trigger-name">Authority & Impersonation</div>
+
+<div class="trigger-desc">We're conditioned to trust banks, governments, and institutions. Fake logos and official language bypass critical thinking.</div>
+
+<div class="trigger-example">"This is SBI Bank's Fraud Prevention Team…"</div>
+
+</div>
+
+</div>
+
+<div class="trigger-item">
+
+<div class="trigger-icon">😨</div>
+
+<div>
+
+<div class="trigger-name">Fear of Loss</div>
+
+<div class="trigger-desc">Losing something activates stronger emotional response than gaining. Threats of account suspension, lost money, or legal trouble override logic.</div>
+
+<div class="trigger-example">"₹50,000 will be debited unless you confirm now."</div>
+
+</div>
+
+</div>
+
+<div class="trigger-item">
+
+<div class="trigger-icon">🎁</div>
+
+<div>
+
+<div class="trigger-name">Reward & Scarcity</div>
+
+<div class="trigger-desc">Winning something feels special. "Only 3 slots left" creates FOMO that bypasses your scam-detector.</div>
+
+<div class="trigger-example">"You've won a paid internship! Only 2 spots remaining."</div>
+
+</div>
+
+</div>
+
+<div class="trigger-item">
+
+<div class="trigger-icon">🤝</div>
+
+<div>
+
+<div class="trigger-name">Familiarity & Trust</div>
+
+<div class="trigger-desc">Messages using your name, location, or bank make the threat feel personal and legitimate. Data from breaches makes this frighteningly precise.</div>
+
+<div class="trigger-example">"Dear Priya, your HDFC account ending in 7823…"</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="redflags-section">
+
+<div class="redflags-title">🚨 Universal Red Flags</div>
+
+<div class="redflags-grid">
+
+<div class="redflag"><div class="rf-dot"></div>Requests OTP or password</div>
+
+<div class="redflag"><div class="rf-dot"></div>Asks to pay a "registration fee"</div>
+
+<div class="redflag"><div class="rf-dot"></div>Sends an unverifiable link</div>
+
+<div class="redflag"><div class="rf-dot"></div>Threatens immediate consequences</div>
+
+<div class="redflag"><div class="rf-dot"></div>Asks for Aadhaar / PAN details</div>
+
+<div class="redflag"><div class="rf-dot"></div>Grammar errors in "official" msgs</div>
+
+<div class="redflag"><div class="rf-dot"></div>Unsolicited "congratulations"</div>
+
+<div class="redflag"><div class="rf-dot"></div>Unknown number, official claim</div>
+
+</div>
+
+</div>
+
+<div class="btn-row">
+
+<button class="btn-primary" onclick="goTo('screen-profile')">▶ Start Simulation</button>
+
+<button class="btn-secondary" onclick="goTo('screen-home')">← Home</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* ============================================================
+
+SCAM DATABASE — v2
+
+============================================================ */
+
+/* ============================================================
+
+APP THEMES
+
+============================================================ */
+
+const APP_THEMES = {
+
+whatsapp: {
+
+bg: "#0b141a",
+
+header: "#202c33",
+
+accent: "#25D366",
+
+name: "WhatsApp",
+
+icon: "💬"
+
+},
+
+instagram: {
+
+bg: "#10090f",
+
+header: "linear-gradient(135deg,#feda75,#d62976,#962fbf,#4f5bd5)",
+
+accent: "#ff77d9",
+
+name: "Instagram DM",
+
+icon: "📸",
+
+chatBg: "#0b0810",
+
+body: "#140818"
+
+},
+
+gmail: {
+
+bg: "#121212",
+
+header: "#202124",
+
+accent: "#ea4335",
+
+name: "Gmail",
+
+icon: "📧"
+
+},
+
+discord: {
+
+bg: "#313338",
+
+header: "#1e1f22",
+
+accent: "#5865F2",
+
+name: "Discord",
+
+icon: "🎮"
+
+},
+
+telegram: {
+
+bg: "#18222d",
+
+header: "#202b36",
+
+accent: "#2AABEE",
+
+name: "Telegram",
+
+icon: "✈️"
+
+}
+
+};
+
+/* ============================================================
+
+SAFE MESSAGES
+
+============================================================ */
+
+const SAFE_MESSAGES = [
+
+{
+
+appIcon: "🍔",
+
+appName: "Swiggy",
+
+sender: "Swiggy Delivery",
+
+avatar: "🍔",
+
+avatarBg: "#2a1a0f",
+
+message:
+
+"Your order has been delivered successfully.",
+
+safe: true
+
+},
+
+{
+
+appIcon: "📚",
+
+appName: "Google Classroom",
+
+sender: "Professor Sharma",
+
+avatar: "📚",
+
+avatarBg: "#1a2535",
+
+message:
+
+"Reminder: Assignment submission deadline is tomorrow 11:59 PM.",
+
+safe: true
+
+},
+
+{
+
+appIcon: "💬",
+
+appName: "WhatsApp",
+
+sender: "Rahul",
+
+avatar: "👦",
+
+avatarBg: "#1a3a2a",
+
+message:
+
+"Bro are we still meeting at 5?",
+
+safe: true
+
+},
+
+{
+
+appIcon: "📦",
+
+appName: "Amazon",
+
+sender: "Amazon Updates",
+
+avatar: "📦",
+
+avatarBg: "#2a2a0f",
+
+message:
+
+"Your package has been shipped and will arrive tomorrow.",
+
+safe: true
+
+},
+
+{
+
+appIcon: "🏦",
+
+appName: "HDFC Bank",
+
+sender: "HDFC Alerts",
+
+avatar: "🏦",
+
+avatarBg: "#1a1f30",
+
+message:
+
+"₹500 credited to your account ending in 2841.",
+
+safe: true
+
+}
+
+];
+
+const SCAMS = {
+
+student: {
+
+name: "🎓 Student",
+
+levels: {
+
+1: {
+
+name: "Internship Fee Scam",
+
+appIcon: "💼", appName: "WhatsApp",
+
+sender: "TechNova Careers (+91 98765 XXXXX)",
+
+avatar: "💼",
+
+avatarBg: "#1a3a2a",
+
+messages: [
+
+"Congratulations! You've been selected for a ₹25,000/month PAID internship. Pay ₹500 registration fee within 1 hour to confirm your slot.",
+
+"⚠ REMINDER: Only 2 slots left! Your slot expires soon. Pay ₹500 NOW.",
+
+"FINAL WARNING ⚠ Your internship slot has been given to the next candidate. Pay immediately to reclaim it."
+
+],
+
+scamLink: "Confirm & Pay ₹500 →",
+
+redflags: ["Asks for upfront payment", "Unsolicited selection", "Artificial deadline", "Unknown mobile number"]
+
+},
+
+2: {
+
+name: "Fake HR Email Scam",
+
+appIcon: "📧", appName: "Gmail",
+
+sender: "hr@technova-careers.in",
+
+avatar: "📧",
+
+avatarBg: "#1a2a3a",
+
+messages: [
+
+"Dear Candidate, following your application on LinkedIn, TechNova shortlisted you for our Summer Analyst Program (₹30,000/month). Complete the onboarding form and pay ₹999 background verification fee.",
+
+"Your onboarding slot is reserved until 6PM today. Please complete the verification to avoid reassignment.",
+
+"Final notice: HR has reassigned your slot. Reply NOW with payment confirmation to restore your application."
+
+],
+
+scamLink: "Complete Onboarding Form →",
+
+redflags: ["Unofficial email domain", "Background fee is illegal", "Urgency pressure", "Never applied here"]
+
+},
+
+3: {
+
+name: "LinkedIn Recruiter Scam",
+
+appIcon: "🔗", appName: "LinkedIn",
+
+sender: "Sarah Mitchell · Senior Recruiter · Google",
+
+avatar: "👩‍💼",
+
+avatarBg: "#1a2535",
+
+messages: [
+
+"Hi! I came across your profile and was impressed. We have a remote SWE internship (₹60,000/month). We just need a ₹1,500 equipment deposit — fully refunded on Day 1.",
+
+"The team loved your profile. Just a formality — the deposit protects us from no-shows. Completely standard across our hiring.",
+
+"Hi, I have to fill the position by EOD. The deposit is 100% refundable. Can you confirm? We don't want to lose you."
+
+],
+
+scamLink: "Pay Equipment Deposit →",
+
+redflags: ["Big company won't ask deposits", "Profile came 'across' randomly", "Deposit is never standard", "EOD pressure"]
+
+}
+
+}
+
+},
+
+professional: {
+
+name: "💼 Professional",
+
+levels: {
+
+1: {
+
+name: "Bank OTP Scam",
+
+appIcon: "🏦", appName: "SMS",
+
+sender: "SBI-ALERT",
+
+avatar: "🏦",
+
+avatarBg: "#1a1f30",
+
+messages: [
+
+"URGENT: Suspicious transaction of ₹47,000 detected on your SBI account. Share OTP sent to your number to CANCEL this transaction immediately.",
+
+"WARNING: Transaction processing in 5 minutes. Share OTP NOW to block it.",
+
+"FINAL ALERT: ₹47,000 has been debited. To reverse, call 080-XXXXXXXX and share your OTP."
+
+],
+
+scamLink: "Share OTP to Cancel →",
+
+redflags: ["Banks never ask for OTP", "OTP cannot cancel transactions", "Fake callback number", "All-caps urgency"]
+
+},
+
+2: {
+
+name: "KYC Expiry Scam",
+
+appIcon: "📱", appName: "SMS",
+
+sender: "HDFC-BANK",
+
+avatar: "🏦",
+
+avatarBg: "#0f1f30",
+
+messages: [
+
+"Your HDFC account KYC expires today. Account will be blocked by midnight. Update KYC immediately: hdfckyc-update.in/verify",
+
+"This is your second KYC reminder. Failure to update will result in permanent account suspension per RBI directive.",
+
+"FINAL: Your account has been temporarily suspended. Visit the link within 30 mins to restore access."
+
+],
+
+scamLink: "Update KYC Now →",
+
+redflags: ["Unofficial URL domain", "RBI doesn't work like this", "KYC via SMS link is fake", "Account suspension scare"]
+
+},
+
+3: {
+
+name: "Investment Fraud Scam",
+
+appIcon: "📈", appName: "Telegram",
+
+sender: "SEBI Market Alerts (Official)",
+
+avatar: "📊",
+
+avatarBg: "#0f2218",
+
+messages: [
+
+"Exclusive: Our algorithm identified IRFC stock for 180% gain this week. Our 4,300 subscribers averaged ₹2.1L profit last month. Join our premium group (₹999/month) before market opens.",
+
+"Limited access: Only 50 spots in our Level 2 group where we share live calls. IRFC already up 12% since our alert. Joining now?",
+
+"This is your last chance for this month's premium group. After 10PM tonight, entry closes. Minimum investment ₹5,000 to participate in today's call."
+
+],
+
+scamLink: "Join Premium Group →",
+
+redflags: ["SEBI doesn't run Telegram groups", "Guaranteed returns are illegal", "Pump & dump scheme", "Urgency + greed trigger"]
+
+}
+
+}
+
+},
+
+senior: {
+
+name: "🏠 Senior Citizen",
+
+levels: {
+
+1: {
+
+name: "Pension KYC Scam",
+
+appIcon: "🏛", appName: "SMS",
+
+sender: "Gov-Pension-Dept",
+
+avatar: "🏛",
+
+avatarBg: "#1a1a10",
+
+messages: [
+
+"Your pension account KYC is pending. Pension payment for this month may be delayed. Submit Aadhaar + bank details at: pension-kyc.gov.in",
+
+"REMINDER: Pension verification incomplete. Submit documents within 24 hours to avoid suspension of benefits.",
+
+"FINAL NOTICE: Your pension has been put on hold. Call 1800-XXXXXX with your Aadhaar and account number to restore."
+
+],
+
+scamLink: "Submit KYC Details →",
+
+redflags: ["Govt contacts by post, not SMS", "Fake .gov lookalike URL", "Never share Aadhaar via call", "Fear of losing pension"]
+
+},
+
+2: {
+
+name: "Medical Insurance Scam",
+
+appIcon: "🏥", appName: "SMS",
+
+sender: "PM-Ayushman-Help",
+
+avatar: "🏥",
+
+avatarBg: "#1a100f",
+
+messages: [
+
+"Your Ayushman Bharat card has expired. Your family will lose ₹5L health coverage. Renew immediately by sharing your Aadhaar OTP with our executive.",
+
+"Our executive is waiting for your OTP. This is a free renewal — no charges. We just need OTP to update your records.",
+
+"URGENT: Your coverage lapsed. Visit nearest hospital and you will be denied treatment without updated card. Share OTP NOW."
+
+],
+
+scamLink: "Renew Coverage Now →",
+
+redflags: ["Ayushman is free, no renewal OTP", "Never share OTP with anyone", "Denial of treatment is a scare tactic", "Impersonating government scheme"]
+
+},
+
+3: {
+
+name: "Fake Police / CBI Scam",
+
+appIcon: "📞", appName: "Phone",
+
+sender: "CBI Cyber Crime Cell (WhatsApp)",
+
+avatar: "👮",
+
+avatarBg: "#1a0f1a",
+
+messages: [
+
+"This is CBI Officer Ramesh Singh. Your Aadhaar has been linked to a money laundering case. You must pay a ₹10,000 'clearance fee' to avoid arrest. This is strictly confidential.",
+
+"Sir/Ma'am, we have your arrest warrant ready. If you cooperate and transfer the fee, the case will be closed quietly. Non-cooperation will result in public arrest.",
+
+"You have 2 hours. Transfer to the provided UPI ID to receive your clearance certificate. Tell no one — this is a confidential legal matter."
+
+],
+
+scamLink: "Pay Clearance Fee →",
+
+redflags: ["CBI/police never WhatsApp for arrests", "Clearance fees don't exist", "Secrecy demand = manipulation", "'Arrest via UPI' is impossible"]
+
+}
+
+}
+
+},
+
+teen: {
+
+name: "📱 Teenager",
+
+levels: {
+
+1: {
+
+name: "Free UC / V-Bucks Scam",
+
+appIcon: "🎮", appName: "Instagram DM",
+
+sender: "FreePubgUC_Official",
+
+avatar: "🎮",
+
+avatarBg: "#1a0f2a",
+
+messages: [
+
+"🎉 Congratulations! You've been selected to receive 10,000 FREE UC in BGMI! Just click the link and enter your game ID + phone number. Limited time!",
+
+"Hurry! 847 players already claimed today. Only 153 free UC codes left. Enter your ID now before they run out!",
+
+"Final step: To verify you're a real player, enter your game account password. We will NOT charge or access your account."
+
+],
+
+scamLink: "Claim Free UC Now →",
+
+redflags: ["Games never DM free currency", "Password request = account theft", "Fake scarcity counter", "Unverified Instagram account"]
+
+},
+
+2: {
+
+name: "Fake Delivery Scam",
+
+appIcon: "📦", appName: "SMS",
+
+sender: "Flipkart-Delivery",
+
+avatar: "📦",
+
+avatarBg: "#1a1a0f",
+
+messages: [
+
+"Your Flipkart order #FK8823 is undeliverable due to incorrect address. Pay ₹29 re-delivery fee at: flipkrt-delivery.in/redeliver within 6 hours or order will be returned.",
+
+"Your order is at the facility. ₹29 re-delivery payment pending. After 3 hours it will be sent back to seller automatically.",
+
+"Last chance: Your order will be returned in 45 minutes. Complete payment to receive your package today."
+
+],
+
+scamLink: "Pay ₹29 Re-delivery →",
+
+redflags: ["URL is misspelled (flipkrt)", "Flipkart never charges re-delivery like this", "Fake urgency countdown", "₹29 is bait for card details"]
+
+},
+
+3: {
+
+name: "Fake Talent Scout Scam",
+
+appIcon: "⭐", appName: "Instagram DM",
+
+sender: "Sony Music India Talent Scouts",
+
+avatar: "🎵",
+
+avatarBg: "#0f0f1a",
+
+messages: [
+
+"Hi! We found your Reels and our A&R team loved your content. Sony Music India is scouting new artists. We'd love to sign you! We just need a ₹2,000 'artist registration' to begin the process.",
+
+"Our scouts only contact 10 people per month. This is a genuine opportunity. Registration fee covers your artist profile creation on our platform.",
+
+"This offer expires at midnight. After that we'll move to the next candidate. The registration fee is ₹2,000 — a small investment for a lifetime career."
+
+],
+
+scamLink: "Pay Registration & Sign →",
+
+redflags: ["Labels never charge artists upfront", "Instagram DM is not scouting channel", "Real contracts involve lawyers", "Flattery + urgency combo"]
+
+}
+
+}
+
+}
+
+};
+
+/* ============================================================
+
+QUIZZES
+
+============================================================ */
+
+const QUIZZES = [
+
+{
+
+question:
+
+"What is the biggest red flag in phishing scams?",
+
+options: [
+
+"Urgency and pressure",
+
+"Friendly tone",
+
+"Long messages",
+
+"Emojis"
+
+],
+
+answer: 0
+
+},
+
+{
+
+question:
+
+"Why should you never share OTPs?",
+
+options: [
+
+"They are private passwords",
+
+"Banks already know them",
+
+"They expire quickly",
+
+"They are useless"
+
+],
+
+answer: 0
+
+},
+
+{
+
+question:
+
+"What should you do before clicking unknown links?",
+
+options: [
+
+"Click quickly",
+
+"Verify the sender",
+
+"Ignore forever",
+
+"Forward to friends"
+
+],
+
+answer: 1
+
+}
+
+];
+
+/* ============================================================
+
+RIDDLES
+
+============================================================ */
+
+const RIDDLES = [
+
+{
+
+question:
+
+"I pretend to protect your bank account but steal your credentials instead. What am I?",
+
+answer:
+
+"phishing"
+
+},
+
+{
+
+question:
+
+"I create urgency so you panic before thinking. What scam tactic am I?",
+
+answer:
+
+"urgency"
+
+},
+
+{
+
+question:
+
+"I look official, use logos, and fake authority to gain trust. What technique am I?",
+
+answer:
+
+"impersonation"
+
+}
+
+];
+
+/* ============================================================
+
+STATE
+
+============================================================ */
+
+const state = {
+
+profile: null,
+
+level: null,
+
+score: 0,
+
+xp: 0,
+
+streak: 0,
+
+rank: "Spam Rookie",
+
+messageStage: 0,
+
+countdown: null,
+
+timerInterval: null,
+
+startTime: null,
+
+timeLeft: 10,
+
+currentScenario: null,
+
+lastResult: null,
+
+lastPoints: 0,
+
+lastReaction: null,
+
+lastLevelName: null,
+
+survey: {
+
+app: "",
+
+confidence: "",
+
+experience: ""
+
+}
+
+};
+
+/* ============================================================
+
+NAVIGATION
+
+============================================================ */
+
+function goTo(screenId) {
+
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+document.getElementById(screenId).classList.add('active');
+
+window.scrollTo(0, 0);
+
+}
+
+/* ============================================================
+
+SURVEY
+
+============================================================ */
+
+function submitSurvey(){
+
+state.survey.app =
+
+document.getElementById('survey-app').value;
+
+state.survey.confidence =
+
+document.getElementById('survey-confidence').value;
+
+state.survey.experience =
+
+document.getElementById('survey-experience').value;
+
+saveProgress();
+
+applyAppTheme();
+
+goTo('screen-profile');
+
+}
+
+/* ============================================================
+
+PROFILE & LEVEL SELECT
+
+============================================================ */
+
+function selectProfile(profile) {
+
+state.profile = profile;
+
+state.score = 0;
+
+document.getElementById('levels-profile-name').textContent =
+
+`Playing as: ${SCAMS[profile].name}`;
+
+goTo('screen-levels');
+
+}
+
+function selectLevel(level) {
+
+if (!state.profile || !SCAMS[state.profile]) {
+
+console.warn('selectLevel called before a profile was selected');
+
+goTo('screen-profile');
+
+return;
+
+}
+
+state.level = level;
+
+state.messageStage = 0;
+
+state.timeLeft = 10;
+
+clearInterval(state.countdown);
+
+clearInterval(state.timerInterval);
+
+startGame();
+
+}
+
+/* ============================================================
+
+SAVE SYSTEM
+
+============================================================ */
+
+function saveProgress(){
+
+localStorage.setItem(
+
+'hackersMirrorSave',
+
+JSON.stringify(state)
+
+);
+
+}
+
+function loadProgress(){
+
+const save =
+
+localStorage.getItem('hackersMirrorSave');
+
+if(save){
+
+try{
+
+const parsed = JSON.parse(save);
+
+state.xp = parsed.xp || 0;
+
+state.rank = parsed.rank || "Spam Rookie";
+
+state.streak = parsed.streak || 0;
+
+if(parsed.survey){
+
+state.survey = parsed.survey;
+
+}
+
+}catch(err){
+
+console.log("Save failed");
+
+}
+
+}
+
+}
+
+/* ============================================================
+
+CLOCK
+
+============================================================ */
+
+function updateClock() {
+
+const now = new Date();
+
+const h = now.getHours().toString().padStart(2,'0');
+
+const m = now.getMinutes().toString().padStart(2,'0');
+
+const timeStr = `${h}:${m}`;
+
+const dateStr = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+
+const el1 = document.getElementById('phone-clock');
+
+const el2 = document.getElementById('phone-date');
+
+const el3 = document.getElementById('phone-time-small');
+
+if(el1) el1.textContent = timeStr;
+
+if(el2) el2.textContent = dateStr;
+
+if(el3) el3.textContent = timeStr;
+
+}
+
+/* ============================================================
+
+APP THEME ENGINE
+
+============================================================ */
+
+function applyAppTheme(){
+
+const app =
+
+state.survey.app || "whatsapp";
+
+const theme =
+
+APP_THEMES[app];
+
+// Phone background
+
+document.getElementById('phone-screen')
+
+.style.background = theme.bg;
+
+// Chat header
+
+document.getElementById('chat-header')
+
+.style.background = theme.header;
+
+// Notification
+
+document.getElementById('phone-notif')
+
+.style.background = theme.header;
+
+// Chat body background
+
+document.getElementById('phone-chat')
+
+.style.background = theme.chatBg || '#0d1520';
+
+// App name
+
+document.getElementById('notif-app')
+
+.textContent =
+
+`${theme.icon} ${theme.name}`;
+
+// Accent glow
+
+document.documentElement.style
+
+.setProperty('--accent', theme.accent);
+
+// Override chat bubble accent for strong app theming
+
+document.documentElement.style
+
+.setProperty('--app-chat-bg', theme.body || '#0d1520');
+
+}
+
+
+/* ============================================================
+
+MESSAGE GENERATOR
+
+============================================================ */
+
+function randomSafeMessage(){
+
+return SAFE_MESSAGES[
+
+Math.floor(Math.random() * SAFE_MESSAGES.length)
+
+];
+
+}
+
+function generateScenario(){
+
+const scam =
+
+SCAMS[state.profile].levels[state.level];
+
+const safeChance =
+
+Math.random();
+
+// HARD MODE = more scams
+
+if(state.level === 3){
+
+state.currentScenario =
+
+safeChance < 0.25
+
+? randomSafeMessage()
+
+: scam;
+
+}
+
+// MEDIUM
+
+else if(state.level === 2){
+
+state.currentScenario =
+
+safeChance < 0.4
+
+? randomSafeMessage()
+
+: scam;
+
+}
+
+// EASY
+
+else{
+
+state.currentScenario =
+
+safeChance < 0.5
+
+? randomSafeMessage()
+
+: scam;
+
+}
+
+}
+
+/* ============================================================
+
+START GAME
+
+============================================================ */
+
+function startGame() {
+
+generateScenario();
+
+applyAppTheme();
+
+const scam = state.currentScenario;
+
+// HUD
+
+document.getElementById('hud-profile').textContent = SCAMS[state.profile].name;
+
+document.getElementById('hud-level').textContent = state.level;
+
+document.getElementById('hud-score').textContent = state.score;
+
+document.getElementById('hud-timer').textContent = 10;
+
+document.getElementById('hud-timer').classList.remove('danger');
+
+// Notification
+
+document.getElementById('notif-icon').textContent = scam.appIcon;
+
+document.getElementById('notif-app').textContent = scam.appName;
+
+document.getElementById('notif-sender').textContent = scam.sender;
+
+document.getElementById('notif-preview').textContent = scam.messages[0].substring(0,60) + '…';
+
+// Chat
+
+// Chat
+
+document.getElementById('chat-avatar').textContent =
+
+scam.avatar;
+
+document.getElementById('chat-avatar').style.background =
+
+scam.avatarBg;
+
+document.getElementById('chat-name').textContent =
+
+scam.sender;
+
+// Dynamic button text
+
+if(scam.safe){
+
+document.getElementById('scam-link-btn').textContent =
+
+"✅ Open Message";
+
+}
+
+else{
+
+document.getElementById('scam-link-btn').textContent =
+
+`🔗 ${scam.scamLink}`;
+
+}
+
+document.getElementById('chat-body').innerHTML = '';
+
+// Reset phone
+
+document.getElementById('phone-notif').style.display = 'none';
+
+document.getElementById('phone-notif').style.transform = '';
+
+document.getElementById('phone-notif').style.opacity = '';
+
+document.getElementById('phone-chat').style.display = 'none';
+
+document.getElementById('phone-home').style.display = 'block';
+
+// Reset timer bar
+
+document.getElementById('timer-fill').style.width = '100%';
+
+document.getElementById('timer-fill').style.background = 'var(--accent)';
+
+document.getElementById('progress-fill').style.width = '100%';
+
+updateClock();
+
+loadProgress();
+
+goTo('screen-game');
+
+// Show notification after 1.5s
+
+setTimeout(() => {
+
+document.getElementById('phone-notif').style.display = 'block';
+
+state.startTime = Date.now();
+
+startCountdown();
+
+}, 1500);
+
+// Swipe to ignore
+
+setupSwipe();
+
+}
+
+/* ============================================================
+
+OPEN CHAT
+
+============================================================ */
+
+function openChat() {
+
+const scam = SCAMS[state.profile].levels[state.level];
+
+document.getElementById('phone-notif').style.display = 'none';
+
+document.getElementById('phone-chat').style.display = 'flex';
+
+// Add first bubble
+
+const body = document.getElementById('chat-body');
+
+body.innerHTML = '';
+
+if(scam.safe){
+
+addBubble(scam.message, false);
+
+}
+
+else{
+
+addBubble(scam.messages[0], false);
+
+}
+
+}
+
+function addBubble(text, isPressure) {
+
+const body = document.getElementById('chat-body');
+
+const div = document.createElement('div');
+
+div.className = 'chat-bubble' + (isPressure ? ' pressure-bubble' : '');
+
+div.textContent = text;
+
+body.appendChild(div);
+
+body.scrollTop = body.scrollHeight;
+
+}
+
+/* ============================================================
+
+TIMER
+
+============================================================ */
+
+function startCountdown() {
+
+clearInterval(state.countdown);
+
+state.timeLeft = 10;
+
+state.countdown = setInterval(() => {
+
+state.timeLeft--;
+
+const timerEl = document.getElementById('hud-timer');
+
+const fillEl = document.getElementById('timer-fill');
+
+const progEl = document.getElementById('progress-fill');
+
+if (timerEl) timerEl.textContent = state.timeLeft;
+
+if (fillEl) {
+
+const pct = (state.timeLeft / 10) * 100;
+
+fillEl.style.width = pct + '%';
+
+if (state.timeLeft <= 3) {
+
+fillEl.style.background = 'var(--accent2)';
+
+timerEl && timerEl.classList.add('danger');
+
+}
+
+}
+
+if (state.timeLeft <= 0) {
+
+clearInterval(state.countdown);
+
+increasePressure();
+
+}
+
+}, 1000);
+
+}
+
+function increasePressure() {
+
+if(state.currentScenario.safe){
+
+return;
+
+}
+
+const scam = SCAMS[state.profile].levels[state.level];
+
+state.messageStage++;
+
+if (state.messageStage < scam.messages.length) {
+
+addBubble(scam.messages[state.messageStage], true);
+
+// Update notification preview too
+
+document.getElementById('notif-preview').textContent =
+
+scam.messages[state.messageStage].substring(0,60) + '…';
+
+// Reset timer
+
+document.getElementById('timer-fill').style.background = 'var(--accent)';
+
+document.getElementById('hud-timer').classList.remove('danger');
+
+startCountdown();
+
+}
+
+}
+
+/* ============================================================
+
+SWIPE TO IGNORE
+
+============================================================ */
+
+function setupSwipe() {
+
+const notif = document.getElementById('phone-notif');
+
+let startX = 0;
+
+notif.onmousedown = (e) => { startX = e.clientX; };
+
+notif.onmouseup = (e) => {
+
+const diff = e.clientX - startX;
+
+if (diff < -80) {
+
+notif.style.transition = 'all 0.3s';
+
+notif.style.transform = 'translateX(-400px)';
+
+notif.style.opacity = '0';
+
+setTimeout(() => choose('ignore'), 300);
+
+}
+
+};
+
+// Touch support
+
+notif.ontouchstart = (e) => { startX = e.touches[0].clientX; };
+
+notif.ontouchend = (e) => {
+
+const diff = e.changedTouches[0].clientX - startX;
+
+if (diff < -60) {
+
+notif.style.transition = 'all 0.3s';
+
+notif.style.transform = 'translateX(-400px)';
+
+notif.style.opacity = '0';
+
+setTimeout(() => choose('ignore'), 300);
+
+}
+
+};
+
+}
+
+document.addEventListener('keydown', (e) => {
+
+if ((e.key === 'i' || e.key === 'I') && document.getElementById('screen-game').classList.contains('active')) {
+
+choose('ignore');
+
+}
+
+});
+
+/* ============================================================
+
+DECISION
+
+============================================================ */
+
+/* ============================================================
+
+RANK SYSTEM
+
+============================================================ */
+
+function updateRank(){
+
+if(state.xp >= 500){
+
+state.rank = "Cyber Guardian";
+
+}
+
+else if(state.xp >= 250){
+
+state.rank = "Phishing Hunter";
+
+}
+
+else if(state.xp >= 100){
+
+state.rank = "Scam Spotter";
+
+}
+
+else{
+
+state.rank = "Spam Rookie";
+
+}
+
+}
+
+function choose(choice){
+
+clearInterval(state.countdown);
+
+const scam = state.currentScenario;
+
+let result = "";
+
+let points = 0;
+
+// SAFE MESSAGE LOGIC
+
+if(scam.safe){
+
+if(choice === 'bad'){
+
+result = "false-positive";
+
+points = -10;
+
+}
+
+else{
+
+result = "safe-correct";
+
+points = 15;
+
+}
+
+}
+
+// SCAM MESSAGE LOGIC
+
+else{
+
+if(choice === 'bad'){
+
+result = "scam-clicked";
+
+points = -20;
+
+}
+
+else if(choice === 'verify'){
+
+result = "scam-caught";
+
+points = 25;
+
+}
+
+else{
+
+result = "ignored";
+
+points = 10;
+
+}
+
+}
+
+state.score += points;
+
+state.xp += Math.max(points,0);
+
+updateRank();
+
+saveProgress();
+
+showResult(result, points);
+
+}
+
+/* ============================================================
+
+QUIZ SYSTEM
+
+============================================================ */
+
+function startQuiz(){
+
+const quiz =
+
+QUIZZES[
+
+Math.floor(Math.random() * QUIZZES.length)
+
+];
+
+state.currentQuiz = quiz;
+
+document.getElementById('quiz-question')
+
+.textContent = quiz.question;
+
+const options =
+
+document.getElementById('quiz-options');
+
+options.innerHTML = '';
+
+quiz.options.forEach((option,index)=>{
+
+const btn =
+
+document.createElement('button');
+
+btn.className = 'verify-btn';
+
+btn.textContent = option;
+
+btn.onclick = () =>
+
+answerQuiz(index);
+
+options.appendChild(btn);
+
+});
+
+goTo('screen-quiz');
+
+}
+
+function answerQuiz(index){
+
+const quiz = state.currentQuiz;
+
+if(index === quiz.answer){
+
+state.xp += 15;
+
+alert("✅ Correct! +15 XP");
+
+}
+
+else{
+
+alert("❌ Incorrect answer");
+
+}
+
+saveProgress();
+
+startRiddle();
+
+}
+
+/* ============================================================
+
+RIDDLE SYSTEM
+
+============================================================ */
+
+function startRiddle(){
+
+const riddle =
+
+RIDDLES[
+
+Math.floor(Math.random() * RIDDLES.length)
+
+];
+
+state.currentRiddle = riddle;
+
+document.getElementById('riddle-text')
+
+.textContent = riddle.question;
+
+document.getElementById('riddle-answer')
+
+.value = '';
+
+goTo('screen-riddle');
+
+}
+
+function submitRiddle(){
+
+const input =
+
+document.getElementById('riddle-answer')
+
+.value
+
+.trim()
+
+.toLowerCase();
+
+const answer =
+
+state.currentRiddle.answer
+
+.toLowerCase();
+
+if(input.includes(answer)){
+
+state.xp += 20;
+
+alert("🧠 Correct Riddle! +20 XP");
+
+}
+
+else{
+
+alert(
+
+`❌ Correct Answer: ${state.currentRiddle.answer}`
+
+);
+
+}
+
+updateRank();
+
+saveProgress();
+
+goTo('screen-home');
+
+}
+
+/* ============================================================
+
+RESULT SCREEN
+
+============================================================ */
+
+function showResult(result, points){
+
+const title =
+
+document.getElementById('mirror-title');
+
+const verdict =
+
+document.getElementById('mirror-verdict');
+
+const joke =
+
+document.getElementById('mirror-joke');
+
+const score =
+
+document.getElementById('mstat-score');
+
+state.lastResult = result;
+
+state.lastPoints = points;
+
+state.lastReaction = 10 - state.timeLeft;
+
+state.lastLevelName = SCAMS[state.profile]?.levels?.[state.level]?.name || `Level ${state.level}`;
+
+score.textContent = state.score;
+
+if(result === "scam-caught"){
+
+verdict.textContent = "SCAM DETECTED";
+
+title.textContent = "You caught the scam.";
+
+joke.textContent =
+
+"You verified before trusting. That's how digital survival works.";
+
+}
+
+else if(result === "scam-clicked"){
+
+verdict.textContent = "PHISHING SUCCESS";
+
+title.textContent = "You fell for the scam.";
+
+joke.textContent =
+
+"Urgency overpowered logic. That's exactly what scammers want.";
+
+}
+
+else if(result === "safe-correct"){
+
+verdict.textContent = "SAFE MESSAGE";
+
+title.textContent = "Correctly identified.";
+
+joke.textContent =
+
+"Not everything online is dangerous. Critical thinking matters.";
+
+}
+
+else if(result === "false-positive"){
+
+verdict.textContent = "FALSE ALARM";
+
+title.textContent = "That message was safe.";
+
+joke.textContent =
+
+"Cyber awareness is about analysis — not paranoia.";
+
+}
+
+else{
+
+verdict.textContent = "IGNORED";
+
+title.textContent = "You ignored the message.";
+
+joke.textContent =
+
+"Ignoring can protect you sometimes — but verification is better.";
+
+}
+
+goTo('screen-mirror');
+
+setTimeout(()=>{
+
+if (document.getElementById('screen-mirror').classList.contains('active')) {
+
+showAnalytics();
+
+}
+
+},2500);
+
+}
+
+function getAnalyticsRating(result, reaction) {
+
+let base = 50;
+
+if(result === 'scam-caught') base = 90;
+
+else if(result === 'ignored') base = 75;
+
+else if(result === 'safe-correct') base = 80;
+
+else if(result === 'false-positive') base = 65;
+
+else if(result === 'scam-clicked') base = 35;
+
+const timeBonus = Math.max(0, 20 - reaction * 2);
+
+const value = Math.min(100, Math.max(0, base + timeBonus));
+
+return {
+
+value,
+
+label: value >= 85 ? 'Excellent' : value >= 70 ? 'Good' : value >= 50 ? 'Needs Work' : 'At Risk'
+
+};
+
+}
+
+function getAnalyticsTips(result) {
+
+if(result === 'scam-caught') return [
+
+"Keep verifying sender details before you respond.",
+
+"Never share OTPs or codes with anyone claiming to be your bank.",
+
+"Use official apps or websites instead of links from messages."
+
+];
+
+if(result === 'ignored') return [
+
+"Good instinct — now add verification before you ignore.",
+
+"Cross-check suspicious messages with official channels.",
+
+"Save the sender/show message if you're unsure and ask a trusted source."
+
+];
+
+if(result === 'safe-correct') return [
+
+"You made a good call — keep analyzing the message context.",
+
+"Learn the difference between a safe alert and a phishing lure.",
+
+"Watch for spelling mistakes and unexpected requests."
+
+];
+
+if(result === 'false-positive') return [
+
+"You're cautious, but don't ignore safe communications unnecessarily.",
+
+"Check the sender and the message content before deciding it's a threat.",
+
+"Balance suspicion with healthy verification habits."
+
+];
+
+return [
+
+"Pause before reacting to urgent messages.",
+
+"Verify sender identity and URL spelling carefully.",
+
+"If a request asks for money or codes, treat it as suspicious."
+
+];
+
+}
+
+function getAnalyticsSummary(result, reaction) {
+
+if(result === 'scam-caught') return `Great work — you stopped a scam in ${reaction}s. Keep that verification habit strong.`;
+
+if(result === 'ignored') return `Your instinct was right. In ${reaction}s you chose caution, but verifying sources will make you even safer.`;
+
+if(result === 'safe-correct') return `Nice judgement. In ${reaction}s you recognized a safe message and avoided overreacting.`;
+
+if(result === 'false-positive') return `You identified risk quickly in ${reaction}s, but this was a false alarm. Learn the difference between suspicion and certainty.`;
+
+return `You chose quickly in ${reaction}s. Slow down, verify sender details, and never trust urgent payment requests.`;
+
+}
+
+function showAnalytics() {
+
+const analyticsTitle = document.getElementById('analytics-title');
+
+const analyticsSummary = document.getElementById('analytics-summary');
+
+const analyticsScore = document.getElementById('analytics-score');
+
+const analyticsRating = document.getElementById('analytics-rating');
+
+const analyticsLevel = document.getElementById('analytics-level');
+
+const analyticsTips = document.getElementById('analytics-tips');
+
+const analyticsPoints = document.getElementById('analytics-points');
+
+const result = state.lastResult || 'unknown';
+
+const reaction = state.lastReaction ?? 10;
+
+const rating = getAnalyticsRating(result, reaction);
+
+analyticsTitle.textContent = `Level Analysis — ${state.lastLevelName}`;
+
+analyticsLevel.textContent = `Level ${state.level} • ${state.lastLevelName}`;
+
+analyticsScore.textContent = state.score;
+
+analyticsPoints.textContent = `${state.lastPoints} pts`;
+
+analyticsRating.textContent = `${rating.value}% • ${rating.label}`;
+
+analyticsSummary.textContent = getAnalyticsSummary(result, reaction);
+
+analyticsTips.innerHTML = getAnalyticsTips(result)
+
+.map(t => `<div class="analytics-tip"><span class="tip-dot"></span>${t}</div>`)
+
+.join('');
+
+goTo('screen-analytics');
+
+}
+
+/* ============================================================
+
+MIRROR REVEAL
+
+============================================================ */
+
+function showMirror(choice, reaction) {
+
+const scam = SCAMS[state.profile].levels[state.level];
+
+const card = document.getElementById('mirror-card');
+
+const verdictEl = document.getElementById('mirror-verdict');
+
+const titleEl = document.getElementById('mirror-title');
+
+const jokeEl = document.getElementById('mirror-joke');
+
+const rfEl = document.getElementById('mirror-redflags');
+
+card.className = 'mirror-card';
+
+if (choice === 'bad') {
+
+card.classList.add('outcome-bad');
+
+verdictEl.className = 'mirror-verdict verdict-bad';
+
+verdictEl.textContent = '⚠ RISK LEVEL: HIGH — You were compromised';
+
+titleEl.textContent = 'You fell for it.';
+
+const roasts = [
+
+"💀 The scammer just bought a new phone. With your money.",
+
+"📉 Cyber awareness: 0. Scammer happiness: 100.",
+
+"🚨 Somewhere, a scammer is doing a victory dance.",
+
+"😬 You clicked faster than you can think. That's what they count on.",
+
+"🎣 Hook, line, and sinker. The scam worked perfectly."
+
+];
+
+jokeEl.className = 'mirror-joke joke-bad';
+
+jokeEl.textContent = roasts[Math.floor(Math.random() * roasts.length)];
+
+}
+
+else if (choice === 'verify') {
+
+card.classList.add('outcome-verify');
+
+verdictEl.className = 'mirror-verdict verdict-verify';
+
+verdictEl.textContent = '✔ RISK LEVEL: LOW — Smart response';
+
+titleEl.textContent = 'You saw through it.';
+
+const praise = [
+
+"🧠 Scammers hate people like you. Stay suspicious.",
+
+"🛡 Cybersecurity level: Expert. Your account is safe.",
+
+"😎 That scammer just rage-quit. Well played.",
+
+"👏 The verify habit is the #1 scam defense. Keep it.",
+
+"🔍 You paused. That pause saved you."
+
+];
+
+jokeEl.className = 'mirror-joke joke-good';
+
+jokeEl.textContent = praise[Math.floor(Math.random() * praise.length)];
+
+}
+
+else {
+
+card.classList.add('outcome-ignore');
+
+verdictEl.className = 'mirror-verdict verdict-ignore';
+
+verdictEl.textContent = '⚡ RISK LEVEL: MEDIUM — Decent instinct';
+
+titleEl.textContent = 'You ignored it. Good, but verify is better.';
+
+const medium = [
+
+"🤔 Something felt off — trust that instinct AND verify next time.",
+
+"👀 Good gut feeling! Verifying would make you unstoppable.",
+
+"👍 Ignoring beats clicking. But detectives verify sources.",
+
+"😅 Safe this time. Curiosity almost won."
+
+];
+
+jokeEl.className = 'mirror-joke joke-mid';
+
+jokeEl.textContent = medium[Math.floor(Math.random() * medium.length)];
+
+}
+
+document.getElementById('mstat-reaction').textContent = reaction + 's';
+
+document.getElementById('mstat-score').textContent = state.score;
+
+document.getElementById('mstat-stage').textContent = `${state.messageStage + 1} / ${scam.messages.length}`;
+
+// Red flags breakdown
+
+rfEl.innerHTML = `
+
+<div class="redflags-title">🔍 Red Flags in This Scam</div>
+
+<div class="redflags-grid">
+
+${scam.redflags.map(f => `<div class="redflag"><div class="rf-dot"></div>${f}</div>`).join('')}
+
+</div>
+
+`;
+
+goTo('screen-mirror');
+
+}
+
+/* ============================================================
+
+EXPLAINER ENGINE
+
+============================================================ */
+
+/* --- EXPLAINER DATA: 4 panels per scam (label/heading/body/canvasFn) --- */
+
+const EXPLAINERS = {
+
+student: {
+
+1: {
+
+title: "Internship Fee Scam",
+
+panels: [
+
+{
+
+label: "What is this scam?",
+
+heading: "The Fake Internship Trap",
+
+body: "Scammers pose as <strong>real companies</strong> and offer paid internships — then demand a small 'registration fee' to confirm your slot.",
+
+scene: "scene-red",
+
+draw: (el) => {
+
+el.innerHTML = `
+
+<div class="char bounce-in" >
+
+<div class="scammer-body">🦹</div>
+
+</div>
+
+<div class="bubble-speech red-bubble slide-in-r" >
+
+Congrats! Pay ₹500 to confirm your internship slot!
+
+</div>
+
+<div class="char" >
+
+<div class="victim-body">😮</div>
+
+</div>
+
+<div class="float-badge" >💼</div>
+
+`;
+
+}
+
+},
+
+{
+
+label: "The psychological trick",
+
+heading: "Urgency + Reward",
+
+body: "Your brain lights up at <strong>'Congratulations'</strong> — and panics at <strong>'only 2 slots left'</strong>. Scammers combine reward and scarcity so you act before you think.",
+
+scene: "scene-amber",
+
+draw: (el) => {
+
+el.innerHTML = `
+
+<div class="float-badge warn-pulse" >⏱</div>
+
+<div class="bubble-speech bounce-in" >
+
+Only 2 slots left!<br>Expires in 1 hour!
+
+</div>
+
+<div class="char" >
+
+<div class="victim-body">😰</div>
+
+</div>
+
+`;
+
+}
+
+},
+
+{
+
+label: "What they do with your money",
+
+heading: "Your ₹500 Vanishes",
+
+body: "Once you pay, the 'company' disappears. <strong>No internship exists.</strong> The scammer collects fees from dozens of students and moves on. Your bank can't reverse it.",
+
+scene: "scene-red",
+
+draw: (el) => {
+
+el.innerHTML = `
+
+<div class="char bounce-in" >
+
+<div class="victim-body">😢</div>
+
+</div>
+
+<div id="moneybag" class="float-badge" >💸</div>
+
+<div class="char" >
+
+<div class="scammer-body">😈</div>
+
+</div>
+
+<div class="bubble-speech red-bubble" >
+
+Thanks sucker!
+
+</div>
+
+`;
+
+setTimeout(() => {
+
+const m = el.querySelector('#moneybag');
+
+if (m) m.classList.add('money-fly');
+
+}, 800);
+
+}
+
+},
+
+{
+
+label: "What to do instead",
+
+heading: "Verify Before You Pay",
+
+body: "<strong>Legit companies never charge candidates.</strong> Search the company name + 'scam'. Call their official number. Check LinkedIn. If they want upfront money — it's fraud.",
+
+scene: "scene-green",
+
+draw: (el) => {
+
+el.innerHTML = `
+
+<div class="float-badge shield-pop" >🛡</div>
+
+<div class="bubble-speech green-bubble bounce-in" >
+
+Search company name + "scam" first!
+
+</div>
+
+<div class="char" >
+
+<div class="victim-body">😎</div>
+
+</div>
+
+`;
+
+}
+
+}
+
+]
+
+},
+
+2: {
+
+title: "Fake HR Email Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"Fake Corporate Email", body:"Scammers register <strong>lookalike email domains</strong> (technova-careers.in instead of technova.com) and send professional-looking offer letters with a 'background verification fee'.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble slide-in-r" >From: hr@technova-careers.in<br>Pay ₹999 background fee</div><div class="float-badge" >📧</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Authority + Legitimacy", body:"Professional language, fake company logos, and a <strong>plausible-sounding reason</strong> (background check) make it feel 100% real. Your brain trusts formal emails.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >🏛</div><div class="bubble-speech bounce-in" >Background verification is<br>standard procedure...</div><div class="char" ><div class="victim-body">🤔</div></div>`; }
+
+},
+
+{ label:"What they do", heading:"Your Data + Money", body:"The fake form collects your <strong>Aadhaar, PAN, and bank details</strong> — plus the ₹999 fee. This data is sold on the dark web or used for further fraud.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😟</div></div><div class="float-badge money-fly" >💳</div><div class="float-badge" >🪪</div><div class="char" ><div class="scammer-body">😈</div></div>`; setTimeout(()=>{const m=el.querySelector('.money-fly');if(m)m.style.animation='moneyFly 1.2s ease-in forwards';},500); }
+
+},
+
+{ label:"What to do instead", heading:"Check the Domain", body:"<strong>Hover over or copy the sender's email.</strong> Real companies use their own domain (company.com). Look up the job posting independently on LinkedIn or the company's official site.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🔍</div><div class="bubble-speech green-bubble bounce-in" >Verify email domain!<br>Call the company directly.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+},
+
+3: {
+
+title: "LinkedIn Recruiter Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"Fake Big-Company Recruiter", body:"Scammers create <strong>convincing LinkedIn profiles</strong> impersonating Google, Amazon or Microsoft recruiters — then ask for a 'refundable equipment deposit'.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble" >Hi! Google internship ₹60k/month. Just need ₹1500 deposit.</div><div class="float-badge" >🔗</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Flattery + Trust", body:"Being 'found' by a top company feels validating. <strong>Flattery bypasses your scepticism.</strong> The 'fully refundable' framing removes your financial concern. Classic trust-building.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >🎣</div><div class="bubble-speech bounce-in" >We love your profile!<br>100% refundable deposit.</div><div class="char" ><div class="victim-body">🤩</div></div>`; }
+
+},
+
+{ label:"What they do", heading:"Deposit Disappears", body:"<strong>No refund ever comes.</strong> The fake recruiter blocks you. Google has no record of the process. Your ₹1,500 is gone — and they have your bank details.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😤</div></div><div class="bubble-speech red-bubble" >Number blocked.<br>Profile deleted.</div><div class="float-badge" >🚫</div>`; }
+
+},
+
+{ label:"What to do instead", heading:"Deposits = Red Flag", body:"<strong>No legitimate employer charges a deposit — ever.</strong> Verify recruiters via the company's official careers page. Message the company's HR directly through official channels.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🛡</div><div class="bubble-speech green-bubble bounce-in" >Real jobs never ask<br>for deposits. Ever.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+}
+
+},
+
+professional: {
+
+1: {
+
+title: "Bank OTP Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"The Fake Bank Alert", body:"Scammers send SMS that look <strong>identical to real bank alerts</strong> — same sender ID format — warning of a suspicious transaction and asking you to share an OTP to 'cancel' it.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble" >URGENT: ₹47,000 transaction detected. Share OTP to cancel!</div><div class="float-badge" >🏦</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Fear of Loss", body:"Losing ₹47,000 triggers <strong>immediate panic</strong>. Fear shuts down rational thinking. The urgency ('5 minutes') forces action before your brain can question why a bank needs your OTP.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge warn-pulse" >😱</div><div class="bubble-speech bounce-in" >Transaction in 5 min!<br>₹47,000 at risk!</div><div class="char" ><div class="victim-body">😰</div></div>`; }
+
+},
+
+{ label:"What they do with your OTP", heading:"Instant Account Drain", body:"Your OTP <strong>authorises a real transfer</strong> — just to the scammer's account, not a reversal. They drain your account in seconds. Banks rarely reverse OTP-authorised transfers.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😱</div></div><div id="mbag" class="float-badge" >💸</div><div class="char" ><div class="scammer-body">😈</div></div><div class="bubble-speech red-bubble" >Transfer complete!</div>`; setTimeout(()=>{const m=el.querySelector('#mbag');if(m)m.classList.add('money-fly');},700); }
+
+},
+
+{ label:"What to do instead", heading:"OTPs Are Yours Alone", body:"<strong>Your bank will NEVER ask for your OTP</strong> — not to cancel, verify, or reverse anything. If you receive such a message, call your bank's official helpline directly.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🔐</div><div class="bubble-speech green-bubble bounce-in" >OTP = Your private key.<br>NEVER share it.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+},
+
+2: {
+
+title: "KYC Expiry Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"Fake KYC Deadline", body:"Scammers send SMSs mimicking bank sender IDs with a <strong>fake KYC expiry notice</strong> and a link to a lookalike website that steals your login and card details.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble" >Your HDFC KYC expires today. Update: hdfckyc-update.in</div><div class="float-badge" >🔗</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Authority + Fear", body:"'RBI directive' and 'account suspension' invoke <strong>government authority and financial fear</strong> simultaneously — two of the most powerful psychological triggers combined.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >🏛</div><div class="bubble-speech bounce-in" >RBI directive.<br>Account suspended.</div><div class="char" ><div class="victim-body">😦</div></div>`; }
+
+},
+
+{ label:"What they steal", heading:"Full Account Takeover", body:"The fake site captures your <strong>net banking credentials, card number, CVV and OTP</strong>. Within minutes, your account is emptied and cards are used online.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😰</div></div><div class="float-badge" >💳</div><div class="float-badge money-fly" >🔑</div><div class="char" ><div class="scammer-body">😈</div></div>`; }
+
+},
+
+{ label:"What to do instead", heading:"Check the URL Carefully", body:"<strong>Real bank URLs are exact</strong>: hdfcbank.com — not hdfckyc-update.in. Always type the URL yourself. KYC is done at the branch or official app — never via SMS link.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🔍</div><div class="bubble-speech green-bubble bounce-in" >Check URL spelling!<br>Go to branch for KYC.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+},
+
+3: {
+
+title: "Investment Fraud",
+
+panels: [
+
+{ label:"What is this scam?", heading:"Fake Stock Tips Group", body:"Scammers impersonate SEBI analysts on Telegram, show <strong>fake profit screenshots</strong>, and charge a 'premium membership fee' for guaranteed stock tips.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble" >180% returns guaranteed!<br>Join Premium ₹999/month</div><div class="float-badge" >📈</div>`; }
+
+},
+
+{ label:"The psychological trick", heading: "Greed + Social Proof", body:"Showing '4,300 happy subscribers' and fabricated profit numbers activates <strong>greed and FOMO</strong>. 'EOD closes' creates artificial urgency before you can research.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >💰</div><div class="bubble-speech bounce-in" >4,300 members made<br>₹2.1L last month!</div><div class="char" ><div class="victim-body">🤑</div></div>`; }
+
+},
+
+{ label:"What they actually do", heading:"Pump, Dump & Vanish", body:"Your subscription fee is stolen immediately. If they push real stocks, they <strong>already own them</strong> — they pump the price using members, then dump their shares, crashing your investment.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">📉</div></div><div id="mbag2" class="float-badge" >💸</div><div class="char" ><div class="scammer-body">😈</div></div>`; setTimeout(()=>{const m=el.querySelector('#mbag2');if(m)m.classList.add('money-fly');},700); }
+
+},
+
+{ label:"What to do instead", heading:"SEBI Doesn't DM You", body:"<strong>SEBI-registered advisors have a registration number</strong> you can verify at sebi.gov.in. Guaranteed returns are illegal in India. If returns sound too good — they are.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🛡</div><div class="bubble-speech green-bubble bounce-in" >Verify SEBI reg number.<br>No guaranteed returns.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+}
+
+},
+
+senior: {
+
+1: {
+
+title: "Pension KYC Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"Fake Pension Department", body:"Scammers send SMSs pretending to be the government, claiming your <strong>pension KYC has expired</strong> and payment will stop unless you submit Aadhaar details via a link.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble" >Gov Pension Dept:<br>Submit Aadhaar or pension stops!</div><div class="float-badge" >🏛</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Fear of Losing Income", body:"For a retired person, <strong>losing pension = losing livelihood</strong>. This fear is so powerful it overrides all scepticism. Scammers know this and target it deliberately.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge warn-pulse" >😨</div><div class="bubble-speech bounce-in" >Pension suspended<br>in 24 hours!</div><div class="char" ><div class="victim-body">😰</div></div>`; }
+
+},
+
+{ label:"What they do with your Aadhaar", heading:"Identity Theft", body:"Your Aadhaar + bank details enable scammers to <strong>take loans in your name, drain your account via UPI, and file fraudulent tax returns</strong>. The damage lasts years.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😢</div></div><div class="float-badge" >🪪</div><div class="float-badge money-fly" >🏦</div><div class="char" ><div class="scammer-body">😈</div></div>`; }
+
+},
+
+{ label:"What to do instead", heading:"Govt Uses Post, Not SMS", body:"<strong>The government contacts pensioners by post — never SMS or WhatsApp.</strong> For Aadhaar updates, only visit the official Aadhaar Seva Kendra. Call a trusted family member if unsure.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >✉</div><div class="bubble-speech green-bubble bounce-in" >Call family first.<br>Govt writes letters.</div><div class="char" ><div class="victim-body">😊</div></div>`; }
+
+}
+
+]
+
+},
+
+2: {
+
+title: "Medical Insurance Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"Fake Ayushman Renewal", body:"Scammers impersonate Ayushman Bharat helplines and claim your <strong>₹5 lakh health coverage has expired</strong> — and they need your OTP to 'renew' it for free.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🦹</div></div><div class="bubble-speech red-bubble" >Ayushman card expired!<br>Share OTP to renew free.</div><div class="float-badge" >🏥</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Health Fear + Authority", body:"Fear of <strong>being denied medical treatment</strong> is one of the most primal fears. Combined with an official-sounding scheme name, it creates near-total compliance.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >🏥</div><div class="bubble-speech bounce-in" >Denied treatment<br>without this renewal!</div><div class="char" ><div class="victim-body">😟</div></div>`; }
+
+},
+
+{ label:"What the OTP does", heading:"Your Account, Their Access", body:"<strong>The OTP unlocks your UPI or bank account</strong> — not your health card. Once they have it, they transfer everything in your account. Ayushman requires no OTP to function.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😱</div></div><div id="mbag3" class="float-badge" >💸</div><div class="char" ><div class="scammer-body">😈</div></div><div class="bubble-speech red-bubble" >Account emptied!</div>`; setTimeout(()=>{const m=el.querySelector('#mbag3');if(m)m.classList.add('money-fly');},700); }
+
+},
+
+{ label:"What to do instead", heading:"Ayushman Is Always Free", body:"<strong>Ayushman Bharat never expires, never requires OTP renewal, and is always free.</strong> For queries, visit your nearest empanelled hospital or call 14555 — the official helpline.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🛡</div><div class="bubble-speech green-bubble bounce-in" >Ayushman never expires.<br>Call 14555 officially.</div><div class="char" ><div class="victim-body">😊</div></div>`; }
+
+}
+
+]
+
+},
+
+3: {
+
+title: "Fake Police / CBI Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"The Digital Arrest Threat", body:"Scammers impersonate CBI or police officers on WhatsApp, claiming your Aadhaar is linked to <strong>money laundering</strong> and you must pay a 'clearance fee' to avoid arrest.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">👮</div></div><div class="bubble-speech red-bubble" >CBI: Money laundering case on your Aadhaar. Pay ₹10,000 now.</div><div class="float-badge" >🚨</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Terror + Secrecy", body:"Arrest threats cause <strong>extreme fear and shame</strong>. The 'tell no one' instruction isolates the victim, preventing family from intervening. This is deliberately engineered.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge warn-pulse" >🚨</div><div class="bubble-speech bounce-in" >Tell NO ONE.<br>Arrest in 2 hours.</div><div class="char" ><div class="victim-body">😨</div></div>`; }
+
+},
+
+{ label:"What they actually want", heading:"Repeat Extortion", body:"The first 'clearance fee' is just the beginning. Once they know you'll pay, they <strong>call back with new charges and escalating threats</strong>. Victims have lost lakhs over weeks.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😰</div></div><div class="float-badge" >📞</div><div class="bubble-speech red-bubble" >New charge: ₹25,000!</div><div class="char" ><div class="scammer-body">😈</div></div>`; }
+
+},
+
+{ label:"What to do instead", heading:"There Is No 'Digital Arrest'", body:"<strong>'Digital arrest' is not a real legal concept in India.</strong> CBI never contacts via WhatsApp. Hang up immediately. Call a family member and report to cybercrime.gov.in or dial 1930.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >📵</div><div class="bubble-speech green-bubble bounce-in" >Hang up. Call family.<br>Report: 1930</div><div class="char" ><div class="victim-body">💪</div></div>`; }
+
+}
+
+]
+
+}
+
+},
+
+teen: {
+
+1: {
+
+title: "Free UC / Gaming Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"The Free Currency Trap", body:"Fake Instagram/Discord accounts promise <strong>free in-game currency (UC, V-Bucks, Robux)</strong> in exchange for your game ID — then ask for your account password to 'verify'.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🕹</div></div><div class="bubble-speech red-bubble" >Free 10,000 UC!<br>Enter your password to verify.</div><div class="float-badge" >🎮</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Greed + Fake Scarcity", body:"A counter showing '847 players already claimed' and '153 left' creates <strong>FOMO panic</strong>. The small ask (just your ID!) seems harmless — until they ask for your password.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >⏳</div><div class="bubble-speech bounce-in" >Only 153 codes left!<br>Claim NOW!</div><div class="char" ><div class="victim-body">😤</div></div>`; }
+
+},
+
+{ label:"What they do", heading:"Account Stolen & Sold", body:"Your game account (with skins, levels, and linked payment methods) is <strong>immediately stolen and sold</strong> on grey-market sites. Linked cards can be charged.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😤</div></div><div class="float-badge" >🎮</div><div class="float-badge money-fly" >💳</div><div class="char" ><div class="scammer-body">😈</div></div>`; }
+
+},
+
+{ label:"What to do instead", heading:"Free Currency Doesn't Exist", body:"<strong>Games do not give free currency via Instagram DMs or third-party sites.</strong> Official giveaways happen inside the game itself. Never enter your password anywhere except the official app/site.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🔐</div><div class="bubble-speech green-bubble bounce-in" >Real freebies are<br>in-game only. Always.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+},
+
+2: {
+
+title: "Fake Delivery Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"The ₹29 Delivery Trap", body:"Fake SMS mimics Flipkart/Amazon delivery alerts with a <strong>misspelled URL</strong> and a small ₹29 re-delivery fee — but the real goal is your card details on the fake payment page.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🚚</div></div><div class="bubble-speech red-bubble" >Order undeliverable.<br>Pay ₹29: flipkrt-delivery.in</div><div class="float-badge" >📦</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Tiny Amount = Lower Guard", body:"₹29 seems harmless — <strong>you're already expecting a delivery</strong>, so it feels real. The small amount tricks you into entering your full card details without suspicion.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >🤷</div><div class="bubble-speech bounce-in" >It's only ₹29...<br>I do have orders pending...</div><div class="char" ><div class="victim-body">🤔</div></div>`; }
+
+},
+
+{ label:"What they actually steal", heading:"Your Full Card Details", body:"The payment page captures your <strong>card number, expiry, CVV and OTP</strong>. ₹29 was bait. Thousands are charged to your card within minutes.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😱</div></div><div id="mbag4" class="float-badge" >💳</div><div class="char" ><div class="scammer-body">😈</div></div><div class="bubble-speech red-bubble" >₹8,499 charged!</div>`; setTimeout(()=>{const m=el.querySelector('#mbag4');if(m)m.classList.add('money-fly');},700); }
+
+},
+
+{ label:"What to do instead", heading:"Check the URL Spelling", body:"<strong>flipkrt ≠ flipkart.</strong> Always check the exact spelling of URLs before entering any payment details. Track orders only inside the official app — never via SMS links.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🔍</div><div class="bubble-speech green-bubble bounce-in" >Use the app to track.<br>Check URL spelling!</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+},
+
+3: {
+
+title: "Fake Talent Scout Scam",
+
+panels: [
+
+{ label:"What is this scam?", heading:"The Fake Record Label DM", body:"Scammers create fake Sony/T-Series Instagram accounts, compliment your Reels, and offer a 'signing deal' — but require a <strong>₹2,000 artist registration fee</strong> first.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="scammer-body">🎵</div></div><div class="bubble-speech red-bubble" >Sony Music loves your content!<br>Pay ₹2000 to register.</div><div class="float-badge" >⭐</div>`; }
+
+},
+
+{ label:"The psychological trick", heading:"Flattery + Dream Bait", body:"Being 'discovered' is a dream. <strong>Flattery lowers every defensive wall.</strong> The mention of a real label name adds false legitimacy. 'Midnight deadline' stops you from asking anyone.", scene:"scene-amber",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge bounce-in" >🌟</div><div class="bubble-speech bounce-in" >We LOVE your talent!<br>Offer expires midnight!</div><div class="char" ><div class="victim-body">🤩</div></div>`; }
+
+},
+
+{ label:"What they do", heading:"Fee Collected, Gone", body:"Once you pay, the account blocks you and disappears. <strong>No contract, no callback, no label.</strong> The Instagram profile was created the same week with stolen photos.", scene:"scene-red",
+
+draw:(el)=>{ el.innerHTML=`<div class="char bounce-in" ><div class="victim-body">😤</div></div><div class="bubble-speech red-bubble" >Account deleted.<br>Money gone.</div><div class="float-badge" >🚫</div>`; }
+
+},
+
+{ label:"What to do instead", heading:"Labels Never Charge Artists", body:"<strong>Real labels pay YOU — they never charge registration fees.</strong> Verify by looking up the label's official website and emailing their A&R team directly. Real contracts involve lawyers.", scene:"scene-green",
+
+draw:(el)=>{ el.innerHTML=`<div class="float-badge shield-pop" >🎤</div><div class="bubble-speech green-bubble bounce-in" >Labels pay you.<br>Email their official site.</div><div class="char" ><div class="victim-body">😎</div></div>`; }
+
+}
+
+]
+
+}
+
+}
+
+};
+
+/* --- EXPLAINER STATE --- */
+
+const expState = {
+
+panels: [],
+
+current: 0,
+
+};
+
+function launchExplainer(outcome) {
+
+const scam = SCAMS[state.profile]?.levels?.[state.level];
+
+const data = EXPLAINERS[state.profile]?.[state.level];
+
+if (!data) { showMirror(state.lastChoice, state.lastElapsed); return; }
+
+expState.panels = data.panels;
+
+expState.current = 0;
+
+// Set title
+
+document.getElementById('exp-scam-title').textContent = data.title;
+
+// Build dots
+
+const dotsEl = document.getElementById('exp-dots');
+
+dotsEl.innerHTML = data.panels.map((_, i) =>
+
+`<div class="exp-dot ${i===0?'active':''}" id="exp-dot-${i}"></div>`
+
+).join('');
+
+goTo('screen-explainer');
+
+renderExpPanel(0, true);
+
+}
+
+function renderExpPanel(idx, isFirst) {
+
+const stageEl = document.getElementById('exp-stage');
+
+const panel = expState.panels[idx];
+
+if (!panel) return;
+
+// Remove exiting panels
+
+stageEl.querySelectorAll('.exp-panel.exiting').forEach(el => el.remove());
+
+// Exit current entering panel
+
+stageEl.querySelectorAll('.exp-panel.entering').forEach(el => {
+
+el.classList.remove('entering');
+
+el.classList.add('exiting');
+
+setTimeout(() => el.remove(), 500);
+
+});
+
+// Create new panel
+
+const div = document.createElement('div');
+
+div.className = 'exp-panel';
+
+div.innerHTML = `
+
+<div class="exp-canvas scene-dark" id="exp-canvas-${idx}"></div>
+
+<div class="exp-panel-label">${panel.label}</div>
+
+<div class="exp-panel-heading">${panel.heading}</div>
+
+<div class="exp-panel-body">${panel.body}</div>
+
+`;
+
+stageEl.appendChild(div);
+
+// Trigger animation
+
+requestAnimationFrame(() => {
+
+requestAnimationFrame(() => {
+
+div.classList.add('entering');
+
+});
+
+});
+
+// Override scene class on canvas
+
+const canvasEl = div.querySelector(`#exp-canvas-${idx}`);
+
+canvasEl.className = `exp-canvas ${panel.scene}`;
+
+// Draw cartoon after brief delay
+
+setTimeout(() => panel.draw(canvasEl), isFirst ? 300 : 200);
+
+// Update dots
+
+expState.panels.forEach((_, i) => {
+
+const dot = document.getElementById(`exp-dot-${i}`);
+
+if (!dot) return;
+
+dot.className = 'exp-dot' + (i < idx ? ' done' : i === idx ? ' active' : '');
+
+});
+
+// Update next button
+
+const nextBtn = document.getElementById('exp-next-btn');
+
+if (idx === expState.panels.length - 1) {
+
+nextBtn.textContent = 'See Results →';
+
+nextBtn.style.background = 'var(--accent)';
+
+} else {
+
+nextBtn.textContent = 'Next →';
+
+nextBtn.style.background = 'var(--accent)';
+
+}
+
+}
+
+function explainerNext() {
+
+const next = expState.current + 1;
+
+if (next >= expState.panels.length) {
+
+skipExplainer();
+
+return;
+
+}
+
+expState.current = next;
+
+renderExpPanel(next, false);
+
+}
+
+function replayExplainer() {
+
+expState.current = 0;
+
+renderExpPanel(0, true);
+
+}
+
+function skipExplainer() {
+
+// Clear stage
+
+document.getElementById('exp-stage').innerHTML = '';
+
+showMirror(state.lastChoice, state.lastElapsed);
+
+}
+
+/* ============================================================
+
+INIT
+
+============================================================ */
+
+setInterval(updateClock, 10000);
+
+updateClock();
+
+/* ============================================================
+
+PWA — Service Worker Registration
+
+============================================================ */
+
+if ('serviceWorker' in navigator) {
+
+window.addEventListener('load', () => {
+
+navigator.serviceWorker.register('sw.js')
+
+.then(reg => console.log('SW registered:', reg.scope))
+
+.catch(err => console.log('SW failed:', err));
+
+});
+
+}
+
+/* ============================================================
+
+PWA — Install Prompt (Android)
+
+============================================================ */
+
+let deferredPrompt;
+
+const installBanner = document.getElementById('install-banner');
+
+const installBtn = document.getElementById('install-btn');
+
+const installDismiss = document.getElementById('install-dismiss');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+
+e.preventDefault();
+
+deferredPrompt = e;
+
+if (installBanner) installBanner.style.display = 'flex';
+
+});
+
+if (installBtn) {
+
+installBtn.addEventListener('click', async () => {
+
+if (!deferredPrompt) return;
+
+deferredPrompt.prompt();
+
+const { outcome } = await deferredPrompt.userChoice;
+
+deferredPrompt = null;
+
+if (installBanner) installBanner.style.display = 'none';
+
+});
+
+}
+
+if (installDismiss) {
+
+installDismiss.addEventListener('click', () => {
+
+if (installBanner) installBanner.style.display = 'none';
+
+});
+
+}
+
+window.addEventListener('appinstalled', () => {
+
+if (installBanner) installBanner.style.display = 'none';
+
+});
+
+</script>
+
+<!-- ===================== EXPLAINER ANIMATION ===================== -->
+
+<div class="screen" id="screen-explainer">
+
+<div class="exp-topbar">
+
+<div class="exp-title" id="exp-scam-title">Scam Explainer</div>
+
+<div class="exp-dots" id="exp-dots"></div>
+
+<button class="exp-skip" onclick="skipExplainer()">Skip →</button>
+
+</div>
+
+<div class="exp-stage" id="exp-stage"></div>
+
+<div class="exp-bottom">
+
+<button class="exp-btn-replay" onclick="replayExplainer()">↺ Replay</button>
+
+<button class="exp-btn-next" id="exp-next-btn" onclick="explainerNext()">Next →</button>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
